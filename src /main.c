@@ -6,7 +6,7 @@
 /*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/07/15 18:23:43 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/07/15 18:25:06 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/07/16 13:31:28 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,12 @@
 
 int main(int argc, char **argv)
 {
+	int i;
+
 	if (argc != 9)
 	{
-		
+		exit(1);
 	}
 	
+
 }

@@ -27,5 +27,5 @@ void dongle_unlock(t_dongle * dongle)
 void free_dongle(t_dongle *dongle)
 {
     if (dongle)
-        free(dongle)
+        free(dongle);
 }
