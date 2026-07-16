@@ -10,6 +10,8 @@ t_quantum_compiler	*init(int argc, char **argv)
 		type = FIFO;
 	else if (argv[8] == "edf")
 		type = EDF;
+	else
+		exit(1);
 	result = malloc(sizeof(t_quantum_compiler));
 	if (!result)
 		return NULL;
@@ -24,4 +26,18 @@ t_quantum_compiler	*init(int argc, char **argv)
 	result->scheduler = type;
 
 	return (result);
+}
+
+void	start(t_quantum_compiler *instance)
+{
+	// make threads and init dongles
+	int 		i;
+	t_dongle	**all_dongles;
+
+	all_dongles = malloc(sizeof(t_dongle) * instance->coders_c);
+
+	i = 0;
+	while (i < instance->coders_c)
+		all_dongles = dongle_new(++i);
+	
 }

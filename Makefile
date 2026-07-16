@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wextra -Werror
 SRC = src
 
 all:
-	$(CC) . -o NAME
+	$(CC) SRC/. -o NAME
 
 clean:
 

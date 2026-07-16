@@ -43,4 +43,8 @@ void        dongle_unlock(t_dongle *dongle);
 void        dongle_lock(t_dongle *dongle);
 void        free_dongle(t_dongle *dongle);
 
+t_quantum_compiler	*init(int argc, char **argv);
+
+
+
 # endif
