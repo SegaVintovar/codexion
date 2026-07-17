@@ -29,3 +29,8 @@ void free_dongle(t_dongle *dongle)
     if (dongle)
         free(dongle);
 }
+
+void dongle_cd(t_dongle *dongle)
+{
+    
+}

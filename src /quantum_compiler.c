@@ -28,16 +28,38 @@ t_quantum_compiler	*init(int argc, char **argv)
 	return (result);
 }
 
-void	start(t_quantum_compiler *instance)
+void    init_dongles(t_quantum_compiler *instance)
 {
-	// make threads and init dongles
-	int 		i;
+    int 		i;
 	t_dongle	**all_dongles;
 
 	all_dongles = malloc(sizeof(t_dongle) * instance->coders_c);
-
+    // malloc check
 	i = 0;
 	while (i < instance->coders_c)
-		all_dongles = dongle_new(++i);
-	
+		all_dongles[i] = dongle_new(++i);
+	instance->dongles = all_dongles;
 }
+
+void    init_threads(t_quantum_compiler *instance)
+{
+    int       i;
+    pthread_t **coders;
+
+    i = 0;
+    while (i < instance->coders_c)
+    {
+        // idk
+        i++;
+    }
+}
+
+void	start(t_quantum_compiler *instance)
+{
+	// make threads and init dongles
+    // start simulation
+	init_dongles(instance);
+    init_treads(instance);
+
+}
+
