@@ -32,5 +32,5 @@ void free_dongle(t_dongle *dongle)
 
 void dongle_cd(t_dongle *dongle)
 {
-    
+    usleep()
 }
