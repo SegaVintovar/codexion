@@ -1,6 +1,12 @@
 # include "codexion.h"
 
-typedef struct s_coder
+
+void    take_dongle(t_coder *coder, t_dongle *dongle)
 {
-	pthread_t	coder;
-} t_coder;
+
+}
+
+void    release_dongle(t_coder *coder, t_dongle *dongle)
+{
+    
+}

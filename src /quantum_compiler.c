@@ -1,6 +1,6 @@
 # include "codexion.h"
 
-t_quantum_compiler	*init(int argc, char **argv)
+t_quantum_compiler	*init_compiler(int argc, char **argv)
 {
 	int					i;
 	t_quantum_compiler	*result;
@@ -11,11 +11,11 @@ t_quantum_compiler	*init(int argc, char **argv)
 	else if (argv[8] == "edf")
 		type = EDF;
 	else
-		exit(1);
+		return NULL;
 	result = malloc(sizeof(t_quantum_compiler));
 	if (!result)
 		return NULL;
-	// do some checks here
+	// do some checks here or later???
 	result->coders_c = atoi(argv[1]);
 	result->burnout_t = atoi(argv[2]);
 	result->compile_t = atoi(argv[3]);

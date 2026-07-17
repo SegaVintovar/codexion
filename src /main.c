@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/07/15 18:23:43 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/07/17 17:28:21 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/15 18:23:43 by vsudak            #+#    #+#             */
+/*   Updated: 2026/07/17 18:53:19 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,32 @@ int main(int argc, char **argv)
     pthread_t   desc;
     int ptc;
     const pthread_attr_t *idk;
+    t_quantum_compiler  *instance;
 
-    ptc = pthread_create(&desc, idk, my_func(), );
-    if (ptc == 0)
-        run_the_program(whatever);
-    else
+    if (argc != 9)
     {
-        if (ptc == EAGAIN)
+        printf("Argument count is incorrect");
+        exit(1);
     }
-	if (argc != 9)
-	{
-		exit(1);
-	}
+    instance = init_compiler(argc, argv);
+    if (!instance)
+        exit(1);
+    start(instance);
+    
+    
+    
+    
+    // ptc = pthread_create(&desc, idk, my_func(), );
+    // if (ptc == 0)
+    //     run_the_program(whatever);
+    // else
+    // {
+    //     if (ptc == EAGAIN)
+    // }
+	// if (argc != 9)
+	// {
+	// 	exit(1);
+	// }
 	
 
 }

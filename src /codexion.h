@@ -20,6 +20,14 @@ typedef enum	e_scheduler
 	EDF
 }	t_scheduler;
 
+typedef struct  s_queue_node
+{
+    t_coder         *coders;
+    t_queue_node    *next;
+    t_queue_node    *last;
+    t_queue_node    *head;
+}   t_queue_node;
+
 typedef struct	s_quantum_compiler
 {
 	int			coders_c;
@@ -44,6 +52,7 @@ typedef struct	s_dongle
 {
 	bool	locked;
 	int		id;
+    pthread_mutex_t mutex;
 }	t_dongle;
 
 t_dongle	*dongle_new(int id);
@@ -53,7 +62,7 @@ void        free_dongle(t_dongle *dongle);
 
 
 // quantum compiler methods
-t_quantum_compiler	*init(int argc, char **argv);
+t_quantum_compiler	*init_compiler(int argc, char **argv);
 void	start(t_quantum_compiler *instance);
 
 # endif
