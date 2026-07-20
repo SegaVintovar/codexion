@@ -6,6 +6,9 @@
 # include <stdbool.h>
 # include <stdlib.h>
 # include <time.h>
+# include <unistd.h>
+# include <string.h>
+
 
 typedef enum	e_state
 {
@@ -20,13 +23,35 @@ typedef enum	e_scheduler
 	EDF
 }	t_scheduler;
 
+
+typedef struct	s_dongle
+{
+	bool	locked;
+	int		id;
+    pthread_mutex_t mutex;
+}	t_dongle;
+
+
+typedef struct s_coder
+{
+    pthread_t   coder;
+    t_state     state;
+    t_dongle    *left;
+    t_dongle    *right;
+}   t_coder;
+
 typedef struct  s_queue_node
 {
     t_coder         *coders;
-    t_queue_node    *next;
-    t_queue_node    *last;
-    t_queue_node    *head;
+    struct s_queue_node    *next;
+    struct s_queue_node    *last;
+    struct s_queue_node    *head;
 }   t_queue_node;
+
+typedef struct	s_queue
+{
+	t_coder			*coder;
+}	t_queue;
 
 typedef struct	s_quantum_compiler
 {
@@ -42,20 +67,9 @@ typedef struct	s_quantum_compiler
     pthread_t   **coders;
 }	t_quantum_compiler;
 
-typedef struct s_coder
-{
-    pthread_t   coder;
-    t_state     state;
-    t_dongle    *left;
-    t_dongle    *right;
-}   t_coder;
 
-typedef struct	s_dongle
-{
-	bool	locked;
-	int		id;
-    pthread_mutex_t mutex;
-}	t_dongle;
+
+
 
 t_dongle	*dongle_new(int id);
 void        dongle_unlock(t_dongle *dongle);

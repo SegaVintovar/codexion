@@ -6,9 +6,9 @@ t_quantum_compiler	*init_compiler(int argc, char **argv)
 	t_quantum_compiler	*result;
 	t_scheduler			type;
 
-	if (argv[8] == "fifo")
+	if (strcmp(argv[8], "fifo") == 0)
 		type = FIFO;
-	else if (argv[8] == "edf")
+	else if (strcmp(argv[8], "edf"))
 		type = EDF;
 	else
 		return NULL;
@@ -37,7 +37,10 @@ void    init_dongles(t_quantum_compiler *instance)
     // malloc check
 	i = 0;
 	while (i < instance->coders_c)
-		all_dongles[i] = dongle_new(++i);
+	{
+		all_dongles[i] = dongle_new(i);
+		i++;
+	}
 	instance->dongles = all_dongles;
 }
 
@@ -47,11 +50,11 @@ void    init_threads(t_quantum_compiler *instance)
     pthread_t **coders;
 
     i = 0;
-    coders = malloc(sizeof(*pthread_t) * instance->coders)
+    coders = malloc(sizeof(pthread_t) * instance->coders_c);
     while (i < instance->coders_c)
     {
         // idk
-        coders[i] = pthread_init()
+        coders[i] = pthread_init();
         i++;
     }
 }

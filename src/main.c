@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/15 18:23:43 by vsudak            #+#    #+#             */
-/*   Updated: 2026/07/17 18:53:19 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/07/15 18:23:43 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/07/20 13:10:07 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,22 @@
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void	work(void *smth)
+void	*work(void *smth)
 {
     int i;
+	t_state	*flow[3];
+	t_state code;
+	t_state debug;
+	t_state	refactor;
 
+	code = COMPILE;
+	debug = DEBUG;
+	refactor = REFACTOR;
+	*flow = {&code, &debug, &refactor};
     i = 0;
 	while (i < 3)
     {
-        printf("%s\n", t_state[i]);
+        printf("%s\n", flow[i]);
     }
 }
 
@@ -30,10 +38,12 @@ int main()
 {
     pthread_t coder;
     int id;
-    void *smth
+    void *smth = NULL;
 
-    pthread_create(&coder, NULL, work(), smth)
-    
+    id = pthread_create(&coder, NULL, (void *)work(NULL), smth);
+	pthread_join(id, NULL);
+	printf("\nthread joined to the main one\n");
+    return 0;
 }
 
 // int main(int argc, char **argv)
