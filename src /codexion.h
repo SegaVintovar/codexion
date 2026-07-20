@@ -46,6 +46,8 @@ typedef struct s_coder
 {
     pthread_t   coder;
     t_state     state;
+    t_dongle    *left;
+    t_dongle    *right;
 }   t_coder;
 
 typedef struct	s_dongle

@@ -47,9 +47,11 @@ void    init_threads(t_quantum_compiler *instance)
     pthread_t **coders;
 
     i = 0;
+    coders = malloc(sizeof(*pthread_t) * instance->coders)
     while (i < instance->coders_c)
     {
         // idk
+        coders[i] = pthread_init()
         i++;
     }
 }

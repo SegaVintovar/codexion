@@ -15,28 +15,44 @@
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void	my_func(void *smth)
+void	work(void *smth)
 {
-	
+    int i;
+
+    i = 0;
+	while (i < 3)
+    {
+        printf("%s\n", t_state[i]);
+    }
 }
 
-int main(int argc, char **argv)
+int main()
 {
-	int i;
-    pthread_t   desc;
-    int ptc;
-    const pthread_attr_t *idk;
-    t_quantum_compiler  *instance;
+    pthread_t coder;
+    int id;
+    void *smth
 
-    if (argc != 9)
-    {
-        printf("Argument count is incorrect");
-        exit(1);
-    }
-    instance = init_compiler(argc, argv);
-    if (!instance)
-        exit(1);
-    start(instance);
+    pthread_create(&coder, NULL, work(), smth)
+    
+}
+
+// int main(int argc, char **argv)
+// {
+// 	int i;
+//     pthread_t   desc;
+//     int ptc;
+//     const pthread_attr_t *idk;
+//     t_quantum_compiler  *instance;
+
+//     if (argc != 9)
+//     {
+//         printf("Argument count is incorrect");
+//         exit(1);
+//     }
+//     instance = init_compiler(argc, argv);
+//     if (!instance)
+//         exit(1);
+//     start(instance);
     
     
     
@@ -54,4 +70,4 @@ int main(int argc, char **argv)
 	// }
 	
 
-}
+
