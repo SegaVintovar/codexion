@@ -69,8 +69,6 @@ typedef struct	s_quantum_compiler
 
 
 
-
-
 t_dongle	*dongle_new(int id);
 void        dongle_unlock(t_dongle *dongle);
 void        dongle_lock(t_dongle *dongle);
