@@ -1,46 +1,22 @@
-#include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#include <time.h>
-#include <stdint.h>
-#include <unistd.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   main.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/07/24 11:55:27 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/07/24 17:56:35 by vsudak        ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "codexion.h"
 
-typedef struct s_dongle {
-    pthread_mutex_t		mutex;
-    uint64_t			time;
-    int                 id;
-}   t_dongle;
-
-typedef struct s_coder
+void *coder(t_quantum_compiler *state)
 {
-    pthread_t   coder;
-    // t_state     state;
-    t_dongle    *left;
-    t_dongle    *right;
-    uint64_t    t_since_lc;
-}   t_coder;
 
-typedef struct	s_quantum_compiler
-{
-	int			coders_c;
-	int			burnout_t;
-	int			compile_t;
-	int			debug_t;
-	int			refactor_t;
-	int			comp_c_r;
-	int			dongle_cd;
-	// t_scheduler	scheduler;
-    t_dongle    **dongles;
-    t_coder     *coders;
-}	t_quantum_compiler;
-
-
-// struct timeval {
-// 	time_t      tv_sec;     /* seconds */
-// 	suseconds_t tv_usec;    /* microseconds */
-// };
+	return NULL;
+}
 
 // I need a struct to pass it to the working func
 
@@ -73,16 +49,39 @@ int main(int argc, char **argv)
 {
 	pthread_t	*thread;
     t_coder     *coders;
-	int			thread_ret_val;
-	int			join_ret_val;
+	// int			thread_ret_val;
+	// int			join_ret_val;
 	int			amount_of_coders;
 	int			i;
     int         amount_of_compilations;
-	pthread_mutex_t     mutex;
+	// pthread_mutex_t     mutex;
     t_quantum_compiler  *state;
 
-    state = malloc(sizeof(t_quantum_compiler));
-    // malloc check
+    state = init_compiler(argc, argv);
+	if (!state)
+		return (1);
+	// validate input and assign it to state of the quantum compiler
+	state->dongles = init_dongles(state);
+	if (!state->dongles)
+		free(state); return(1);
+	
+	// create dongles
+	// 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
 	pthread_mutex_init(&mutex, NULL);
 	amount_of_coders = atoi(argv[1]);
     amount_of_compilations = atoi(argv[2]);

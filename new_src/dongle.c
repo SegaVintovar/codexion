@@ -16,6 +16,7 @@ void dongle_lock(t_dongle *dongle)
 {
     if (dongle)
         dongle->locked = true;
+		
 }
 
 void dongle_unlock(t_dongle * dongle)

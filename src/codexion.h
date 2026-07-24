@@ -9,6 +9,9 @@
 # include <unistd.h>
 # include <string.h>
 # include <limits.h>
+# include <sys/time.h>
+# include <stdint.h>
+
 
 
 
@@ -26,23 +29,32 @@ typedef enum	e_scheduler
 }	t_scheduler;
 
 
-typedef struct	s_dongle
-{
-	bool	locked;
-	int		id;
-    pthread_mutex_t mutex;
-}	t_dongle;
+// typedef struct	s_dongle
+// {
+// 	bool	locked;
+// 	int		id;
+//     pthread_mutex_t mutex;
+// }	t_dongle;
+
+typedef struct	s_dongle {
+    pthread_mutex_t		mutex;
+    uint64_t			avaliable_at;
+    int                 id;
+}   t_dongle;
 
 
 typedef struct s_coder
 {
     pthread_t   coder;
-    t_state     state;
+    t_state     state; // do i need it?
     t_dongle    *left;
     t_dongle    *right;
-    
+    uint64_t	t_since_lc;
+	int			comiles_left;
 }   t_coder;
 
+
+// for later
 typedef struct  s_queue_node
 {
     t_coder                *coders;
@@ -55,6 +67,8 @@ typedef struct	s_queue
 {
 	t_coder			*coder;
 }	t_queue;
+
+// 
 
 typedef struct	s_quantum_compiler
 {
@@ -70,7 +84,9 @@ typedef struct	s_quantum_compiler
     pthread_t   **coders;
 }	t_quantum_compiler;
 
-
+// utils
+int ft_isdigit(int c);
+// 
 
 t_dongle	*dongle_new(int id);
 void        dongle_unlock(t_dongle *dongle);

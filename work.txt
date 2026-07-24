@@ -1,5 +1,5 @@
 1. getting parameters
-2. validating them
+2. validating them - under which conditions coders gonna get a burnout
 3. init quantum compiler -> malloc dongles
 4. run as many threads as coders
 5. worker function does:
