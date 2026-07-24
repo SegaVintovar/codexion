@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <unistd.h>
 
+
 typedef struct s_dongle {
     pthread_mutex_t		mutex;
     uint64_t			time;
