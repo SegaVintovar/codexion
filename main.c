@@ -90,13 +90,6 @@ int main(int argc, char **argv)
 	coders = malloc(sizeof(t_coder) * amount_of_coders);
     // give dongles to the coders
     state->coders = coders;
-    // i = 0;
-    // while (i < amount_of_coders)
-    // {
-    //     coders[i]->coder = malloc(sizeof(pthread_t));
-    //     i++; 
-    // }
-	// I think this part goes under another loop that counts amount of the compilations
     while (amount_of_compilations)
     {
         i = 0;

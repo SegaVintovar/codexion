@@ -135,12 +135,13 @@ typedef struct	s_dongle {
 
 typedef struct s_coder
 {
-    pthread_t   coder;
+    pthread_t   thread;
+    int         id;
     t_state     state; // do i need it?
     t_dongle    *left;
     t_dongle    *right;
     uint64_t	t_since_lc;
-	int			comiles_left;
+	int			compiles_left;
 }   t_coder;
 
 
@@ -171,7 +172,7 @@ typedef struct	s_quantum_compiler
 	int			dongle_cd;
 	t_scheduler	scheduler;
     t_dongle    **dongles;
-    pthread_t   **coders;
+    t_coder   **coders;
 }	t_quantum_compiler;
 
 
@@ -179,9 +180,10 @@ int		isint(char *arg);
 int 	ft_isdigit(int c);
 long	my_atoi(const char *nptr);
 
-void    init_dongles(t_quantum_compiler *instance)
-
-
+t_dongle    **init_dongles(t_quantum_compiler *instance);
+t_coder *new_coder(int id, t_quantum_compiler *state);
+void    assign_dongles(t_coder *coder, t_quantum_compiler *state);
+t_coder **init_coders(t_quantum_compiler *state);
 
 t_dongle	*dongle_new(int id);
 void        dongle_unlock(t_dongle *dongle);

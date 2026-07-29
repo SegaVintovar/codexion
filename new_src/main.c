@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/07/24 11:55:27 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/07/24 17:56:35 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/24 11:55:27 by vsudak            #+#    #+#             */
+/*   Updated: 2026/07/27 15:05:53 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,73 +45,152 @@ void *worker(void *arg)
 	return NULL;
 }
 
+void    free_dongles(t_quantum_compiler *state)
+{
+    int i;
+
+    if (state->dongles)
+        {
+            i = 0;
+            while (i < state->coders_c)
+            {
+                if (state->dongles[i])
+                {
+                    pthread_mutex_destroy(&state->dongles[i]->mutex);
+                    free(state->dongles[i]);
+                }
+                i++;
+            }
+            free(state->dongles);
+        }
+}
+
+void    free_coders(t_quantum_compiler *state)
+{
+    int i;
+
+    if (state->coders)
+        {
+            i = 0;
+            while (i < state->coders_c)
+            {
+                if (state->coders[i])
+                    free(state->coders[i]);
+                i++;
+            }
+            free(state->coders);
+        }
+}
+
+void    free_all(t_quantum_compiler *state)
+{
+    if (state)
+    {
+        free_dongles(state);
+        free_coders(state);
+        free(state);
+    }
+}
+
 int main(int argc, char **argv)
 {
-	pthread_t	*thread;
-    t_coder     *coders;
-	// int			thread_ret_val;
-	// int			join_ret_val;
-	int			amount_of_coders;
 	int			i;
-    int         amount_of_compilations;
-	// pthread_mutex_t     mutex;
+    t_dongle    **all_dongles;
     t_quantum_compiler  *state;
 
+    if (argc != 9)
+        return (1);
     state = init_compiler(argc, argv);
 	if (!state)
-		return (1);
-	// validate input and assign it to state of the quantum compiler
-	state->dongles = init_dongles(state);
-	if (!state->dongles)
-		free(state); return(1);
-	
-	// create dongles
-	// 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	pthread_mutex_init(&mutex, NULL);
-	amount_of_coders = atoi(argv[1]);
-    amount_of_compilations = atoi(argv[2]);
-    state->coders_c = amount_of_coders;
-    state->comp_c_r = amount_of_compilations;
-	coders = malloc(sizeof(t_coder) * amount_of_coders);
-    // give dongles to the coders
-    state->coders = coders;
-    // i = 0;
-    // while (i < amount_of_coders)
-    // {
-    //     coders[i]->coder = malloc(sizeof(pthread_t));
-    //     i++; 
-    // }
-	// I think this part goes under another loop that counts amount of the compilations
-    while (amount_of_compilations)
-    {
-        i = 0;
-        while (i < amount_of_coders)
+        return (1);
+    if (state->burnout_t < (state->compile_t + state->debug_t +
+         state->refactor_t))
+        {
+            free(state);
+            return (1);
+        }
+    all_dongles = init_dongles(state);
+	if (!all_dongles)
 		{
-            pthread_create(&coders[i++].coder, NULL, worker, (void *)&mutex);
-		}
-		i = 0;
-        while (i < amount_of_coders)
-            pthread_join(coders[i++].coder, NULL);
-        amount_of_compilations--;
+            free(state);
+            return(1);
+        }
+    state->dongles = all_dongles;
+    state->coders = init_coders(state);
+    if (!state->coders)
+    {
+        free_all(state);
+        return(1);
     }
-	// 
-	pthread_mutex_destroy(&mutex);
-	if (coders)
-		free(coders);
-	return 0;
+    
+    // run_simulation();
+    free_all(state);   
+    
 }
+
+// start coders to work?
+
+
+void *work(void *arg)
+{
+    // we are working while all coders did not reach required amount of compilations
+    // or burnout...
+    // learn how to send signals and use conditions
+    t_quantum_compiler  *state;
+
+    state = (t_quantum_compiler *)arg;
+    
+}
+
+
+void    run(t_quantum_compiler *state)
+{
+    int i;
+
+    i = 0;
+    while (i < state->coders_c)
+    {
+        pthread_create(&state->coders[i]->thread, NULL, work, (void *)state);
+    }
+}
+
+
+
+
+
+
+
+// void old_stuff()
+// {	
+// 	pthread_mutex_init(&mutex, NULL);
+// 	amount_of_coders = atoi(argv[1]);
+//     amount_of_compilations = atoi(argv[2]);
+//     state->coders_c = amount_of_coders;
+//     state->comp_c_r = amount_of_compilations;
+// 	coders = malloc(sizeof(t_coder) * amount_of_coders);
+//     // give dongles to the coders
+//     state->coders = coders;
+//     // i = 0;
+//     // while (i < amount_of_coders)
+//     // {
+//     //     coders[i]->coder = malloc(sizeof(pthread_t));
+//     //     i++; 
+//     // }
+// 	// I think this part goes under another loop that counts amount of the compilations
+//     while (amount_of_compilations)
+//     {
+//         i = 0;
+//         while (i < amount_of_coders)
+// 		{
+//             pthread_create(&coders[i++].coder, NULL, worker, (void *)&mutex);
+// 		}
+// 		i = 0;
+//         while (i < amount_of_coders)
+//             pthread_join(coders[i++].coder, NULL);
+//         amount_of_compilations--;
+//     }
+// 	pthread_mutex_destroy(&mutex);
+// 	if (coders)
+// 		free(coders);
+// 	return 0;
+// }
