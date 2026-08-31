@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/24 11:55:27 by vsudak            #+#    #+#             */
-/*   Updated: 2026/08/24 07:09:16 by vs               ###   ########.fr       */
+/*   Updated: 2026/08/31 12:05:19 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
         free_all(state);
         return(1);
     }
-    
+    run(state);
     // run_simulation();
     free_all(state);   
     
@@ -144,21 +144,6 @@ void *work(void *arg)
     state = (t_quantum_compiler *)arg;
     
 }
-
-
-void    run(t_quantum_compiler *state)
-{
-    int i;
-
-    i = 0;
-    while (i < state->coders_c)
-    {
-        pthread_create(&state->coders[i]->thread, NULL, work, (void *)state);
-    }
-}
-
-
-
 
 
 

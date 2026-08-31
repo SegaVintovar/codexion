@@ -199,5 +199,5 @@ void    *simulation(void *args);
 // quantum compiler methods
 t_quantum_compiler	*init_compiler(int argc, char **argv);
 void	start(t_quantum_compiler *instance);
-
+void    run(t_quantum_compiler *state);
 # endif

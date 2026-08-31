@@ -30,7 +30,7 @@ void    assign_dongles(t_coder *coder, t_quantum_compiler *state)
     else if (c_id == state->coders_c - 1)
     {
         ld_id = c_id - 1;
-        rd_id = 0;
+        rd_id = c_id;
     }
     else
     {

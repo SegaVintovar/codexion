@@ -47,7 +47,7 @@ void    compiling(t_coder *coder, t_quantum_compiler *state)
     pthread_mutex_lock(&coder->left->mutex);
     pthread_mutex_lock(&coder->right->mutex);
     coder->last_comp_t = curtime_full();
-    printf("%u - %i has taken a dongle and started compiling\n", t, coder->id);
+    printf("%lu - %i has taken a dongle and started compiling\n", t, coder->id);
 
     usleep(converter((uint64_t)state->compile_t));
     coder->compiles_left--;
@@ -61,8 +61,8 @@ void    refactoring(t_coder *coder, t_quantum_compiler *state)
     uint64_t    t;
 
     t = time_scince_start(state);
-    printf("%u - %i has started refactoring\n", t, coder->id);
-    usleep((uint64_t)state->refactor_t);
+    printf("%lu - %i has started refactoring\n", t, coder->id);
+    usleep(converter((uint64_t)state->refactor_t));
     
 }
 
@@ -71,8 +71,8 @@ void    debugging(t_coder *coder, t_quantum_compiler *state)
     uint64_t    t;
 
     t = time_scince_start(state);
-    printf("%u - %i has started refactoring\n", t, coder->id);
-    usleep((uint64_t)state->debug_t);
+    printf("%lu - %i has started debugging\n", t, coder->id);
+    usleep(converter((uint64_t)state->debug_t));
 }
 
 // void *simulation(t_coder *coder, t_quantum_compiler *state)
@@ -83,34 +83,44 @@ void *simulation(void *argumnets)
     t_quantum_compiler  *state;
     t_thread_args       *args;
 
-    args = argumnets;
+    args = argumnets;  // could not cast...
     coder = args->coder;
     state = args->state;
     i = 0;
     printf("Sim Start %i\n", coder->id);
     state->start_time = curtime_full();
-    while (i < state->comp_c_r)
+    while (i < state->comp_c_r) // and there is no burnout signal
     {
         compiling(coder, state);
         refactoring(coder, state);
         debugging(coder, state);
         i++;
     }
-
     return NULL;
 }
 
-void *run(t_quantum_compiler *state)
+void run(t_quantum_compiler *state)
 {
-    int     i;
-    t_coder *c;
+    int                 i;
+    t_coder             *c;
+    t_thread_args       args;
 
+    args.state = state;
     i = 0;
     while (i < state->coders_c)
     {
+        args.coder = state->coders[i];
         c = state->coders[i];
-        pthread_create(state->coders[i]->thread, NULL, simulation, (void *));
+        pthread_create(&state->coders[i]->thread, NULL, simulation, (void *)&args);
         i++;
     }
-    return NULL;
+    i = 0;
+    while (i < state->coders_c)
+    {
+
+        c = state->coders[i];
+        pthread_join(c->thread, NULL);
+        i++;
+    }
+    // return NULL;
 }

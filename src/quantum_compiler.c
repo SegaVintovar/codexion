@@ -86,10 +86,10 @@ t_quantum_compiler	*init_compiler(int argc, char **argv)
     {
         printf("assign values\n"); free(result); return NULL;
     }
-		// if (!valid(result))
+	// if (!valid(result))
     //     free(result); return NULL;
 	result->scheduler = type;
-    printf("normal return\n");
+    // printf("normal return\n");
 	return (result);
 }
 
