@@ -44,12 +44,12 @@ int	assign_values(t_quantum_compiler *result, int argc, char **argv)
     {
         printf("not enough coders\n"); return (0);
     }
-    result->burnout_t = my_atoi(argv[2]);
-	result->compile_t = my_atoi(argv[3]);
-    result->debug_t = my_atoi(argv[4]);
-	result->refactor_t = my_atoi(argv[5]);
-	result->comp_c_r = my_atoi(argv[6]);
-	result->dongle_cd = my_atoi(argv[7]);
+    result->burnout_t = (int)my_atoi(argv[2]);
+	result->compile_t = (int)my_atoi(argv[3]);
+    result->debug_t = (int)my_atoi(argv[4]);
+	result->refactor_t = (int)my_atoi(argv[5]);
+	result->comp_c_r = (int)my_atoi(argv[6]);
+	result->dongle_cd = (int)my_atoi(argv[7]);
 	return (1);
 }
 

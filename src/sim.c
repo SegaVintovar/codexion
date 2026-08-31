@@ -83,17 +83,17 @@ void *simulation(void *argumnets)
     t_quantum_compiler  *state;
     t_thread_args       *args;
 
-    args = argumnets;  // could not cast...
-    coder = args->coder;
-    state = args->state;
+    args = (t_thread_args *)argumnets;  // could not cast...
+    // coder = args->coder;
+    // state = args->state;
     i = 0;
-    printf("Sim Start %i\n", coder->id);
-    state->start_time = curtime_full();
-    while (i < state->comp_c_r) // and there is no burnout signal
+    printf("Sim Start %i\n", args->coder->id);
+    args->state->start_time = curtime_full();
+    while (i < args->state->comp_c_r) // and there is no burnout signal
     {
-        compiling(coder, state);
-        refactoring(coder, state);
-        debugging(coder, state);
+        compiling(args->coder, args->state);
+        refactoring(args->coder, args->state);
+        debugging(args->coder, args->state);
         i++;
     }
     return NULL;
@@ -110,6 +110,7 @@ void run(t_quantum_compiler *state)
 		return;
     args->state = state;
     i = 0;
+	
     while (i < state->coders_c)
     {
         args->coder = state->coders[i];
@@ -117,13 +118,15 @@ void run(t_quantum_compiler *state)
         pthread_create(&state->coders[i]->thread, NULL, simulation, (void *)&args);
         i++;
     }
+	// start monitor
     i = 0;
     while (i < state->coders_c)
     {
-
         c = state->coders[i];
         pthread_join(c->thread, NULL);
         i++;
     }
-    // return NULL;
+	// stop monitor
+	if (args)
+		free(args);
 }

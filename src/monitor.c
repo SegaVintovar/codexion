@@ -37,5 +37,5 @@ void	start_monitor(t_quantum_compiler *state)
 
 	pthread_create(mon_tr, NULL, monitor, (void *)state);
 
-	pthread_join(mon_tr, NULL);
+	pthread_join(*mon_tr, NULL);
 }

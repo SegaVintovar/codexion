@@ -12,3 +12,6 @@ coder has to release the dongle and after that nobody can touch it
 
 extra thread for monitor
 
+check thread_create return - EVERYWHERE!!!
+
+

@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                        +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/07/24 11:55:27 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/08/31 13:44:36 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/08/31 17:23:10 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,8 @@ int main(int argc, char **argv)
     }
     run(state);
     // run_simulation();
-    free_all(state);   
+    // maybe run and stop???
+	free_all(state);   
     
 }
 
