@@ -4,7 +4,7 @@ t_scheduler what_is_our_scheldue(char *arg)
 {
     if (strcmp(arg, "fifo") == 0)
         return (FIFO);
-    else if (strcmp(arg, "edf") == 0)
+    else
         return (EDF);
 }
 

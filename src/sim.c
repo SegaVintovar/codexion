@@ -103,13 +103,16 @@ void run(t_quantum_compiler *state)
 {
     int                 i;
     t_coder             *c;
-    t_thread_args       args;
+    t_thread_args       *args;
 
-    args.state = state;
+	args = malloc(sizeof(t_thread_args));
+	if (!args)
+		return;
+    args->state = state;
     i = 0;
     while (i < state->coders_c)
     {
-        args.coder = state->coders[i];
+        args->coder = state->coders[i];
         c = state->coders[i];
         pthread_create(&state->coders[i]->thread, NULL, simulation, (void *)&args);
         i++;

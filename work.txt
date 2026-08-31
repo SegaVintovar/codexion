@@ -8,3 +8,7 @@
 
 how to implement dongle cd?
 coder has to release the dongle and after that nobody can touch it
+
+
+extra thread for monitor
+

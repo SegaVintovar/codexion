@@ -115,7 +115,8 @@ typedef enum	e_state
 typedef enum	e_scheduler
 {
 	FIFO,
-	EDF
+	EDF,
+	NONE
 }	t_scheduler;
 
 
@@ -137,7 +138,7 @@ typedef struct s_coder
 {
     pthread_t   thread;
     int         id;
-    t_state     state; // do i need it?
+    t_state     *state; // do i need it?
     t_dongle    *left;
     t_dongle    *right;
     uint64_t	last_comp_t;
@@ -170,7 +171,7 @@ typedef struct	s_quantum_compiler
 	int			dongle_cd;
 	t_scheduler	scheduler;
     t_dongle    **dongles;
-    t_coder   **coders;
+    t_coder   	**coders;
     uint64_t    start_time;
 }	t_quantum_compiler;
 
@@ -200,4 +201,8 @@ void    *simulation(void *args);
 t_quantum_compiler	*init_compiler(int argc, char **argv);
 void	start(t_quantum_compiler *instance);
 void    run(t_quantum_compiler *state);
+
+// time utils
+uint64_t    curtime_full();
+
 # endif

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/24 11:55:27 by vsudak            #+#    #+#             */
-/*   Updated: 2026/08/31 12:05:19 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/07/24 11:55:27 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/08/31 13:44:36 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,19 +131,17 @@ int main(int argc, char **argv)
     
 }
 
-// start coders to work?
+// old shit
+// void *work(void *arg)
+// {
+//     // we are working while all coders did not reach required amount of compilations
+//     // or burnout...
+//     // learn how to send signals and use conditions
+//     t_quantum_compiler  *state;
 
-
-void *work(void *arg)
-{
-    // we are working while all coders did not reach required amount of compilations
-    // or burnout...
-    // learn how to send signals and use conditions
-    t_quantum_compiler  *state;
-
-    state = (t_quantum_compiler *)arg;
+//     state = (t_quantum_compiler *)arg;
     
-}
+// }
 
 
 
