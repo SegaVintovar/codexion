@@ -140,7 +140,7 @@ typedef struct s_coder
     t_state     state; // do i need it?
     t_dongle    *left;
     t_dongle    *right;
-    uint64_t	t_since_lc;
+    uint64_t	last_comp_t;
 	int			compiles_left;
 }   t_coder;
 
@@ -159,8 +159,6 @@ typedef struct	s_queue
 	t_coder			*coder;
 }	t_queue;
 
-// 
-
 typedef struct	s_quantum_compiler
 {
 	int			coders_c;
@@ -173,8 +171,14 @@ typedef struct	s_quantum_compiler
 	t_scheduler	scheduler;
     t_dongle    **dongles;
     t_coder   **coders;
+    uint64_t    start_time;
 }	t_quantum_compiler;
 
+typedef struct s_thread_args
+{
+    t_coder             *coder;
+    t_quantum_compiler  *state;
+}   t_thread_args;
 
 int		isint(char *arg);
 int 	ft_isdigit(int c);
@@ -189,7 +193,8 @@ t_dongle	*dongle_new(int id);
 void        dongle_unlock(t_dongle *dongle);
 void        dongle_lock(t_dongle *dongle);
 void        free_dongle(t_dongle *dongle);
-
+// void *simulation(t_coder *coder, t_quantum_compiler *state);
+void    *simulation(void *args);
 
 // quantum compiler methods
 t_quantum_compiler	*init_compiler(int argc, char **argv);

@@ -5,4 +5,6 @@
 5. worker function does:
         - tries to take two dongles(how)
     what to pass into the worker function? dongles that are related to the current coder
-    
+
+how to implement dongle cd?
+coder has to release the dongle and after that nobody can touch it
