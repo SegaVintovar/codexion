@@ -37,60 +37,15 @@ int	int_max_and_positivity_check(int argc, char **argv)
 	return (1);
 }
 
-int	assign_values(t_quantum_compiler *result, int argc, char **argv)
+void	assign_values(t_quantum_compiler *result, int argc, char **argv)
 {
-	result->coders_c = my_atoi(argv[1]);
-    if (result->coders_c < 2)
-    {
-        printf("not enough coders\n"); return (0);
-    }
+	result->coders_c = (int)my_atoi(argv[1]);
     result->burnout_t = (int)my_atoi(argv[2]);
 	result->compile_t = (int)my_atoi(argv[3]);
     result->debug_t = (int)my_atoi(argv[4]);
 	result->refactor_t = (int)my_atoi(argv[5]);
 	result->comp_c_r = (int)my_atoi(argv[6]);
 	result->dongle_cd = (int)my_atoi(argv[7]);
-	return (1);
-}
-
-t_quantum_compiler	*init_compiler(int argc, char **argv)
-{
-	int					i;
-	t_quantum_compiler	*result;
-	t_scheduler			type;
-
-    if (is_scheldue(argv[8]))
-	    type = what_is_our_scheldue(argv[8]);
-	else
-        return (NULL);
-	result = malloc(sizeof(t_quantum_compiler));
-	if (!result)
-		return (NULL);
-    i = 1;
-    while (i < argc - 1)
-    {
-		if (!isint(argv[i]))
-        {
-			printf("isint\n"); free(result); return NULL;
-        };
-        i++;
-    }
-    printf("before innt max check\n");
-	if (!int_max_and_positivity_check(argc, argv))
-    {
-        printf("int max and positivity exit\n"); free(result); return NULL;
-    }
-	i = assign_values(result, argc, argv);
-    printf("after assignation, i = %d\n", i);
-    if (i == 0)
-    {
-        printf("assign values\n"); free(result); return NULL;
-    }
-	// if (!valid(result))
-    //     free(result); return NULL;
-	result->scheduler = type;
-    // printf("normal return\n");
-	return (result);
 }
 
 t_dongle    **init_dongles(t_quantum_compiler *instance)
@@ -149,6 +104,56 @@ t_coder **init_coders(t_quantum_compiler *state)
     }
     return (new_coders);
 }
+
+t_quantum_compiler	*init_compiler(int argc, char **argv)
+{
+	int					i;
+	t_quantum_compiler	*result;
+	t_scheduler			type;
+
+    if (is_scheldue(argv[8]))
+	    type = what_is_our_scheldue(argv[8]);
+	else
+        return (NULL);
+
+    i = 1;
+    while (i < argc - 1)
+    {
+		if (!isint(argv[i]))
+        {
+			printf("isint\n"); return NULL;
+        };
+        i++;
+    }
+	if (!int_max_and_positivity_check(argc, argv))
+    {
+        printf("int max and positivity exit\n"); return NULL;
+    }
+
+	result = malloc(sizeof(t_quantum_compiler));
+	if (!result)
+		return (NULL);
+	assign_values(result, argc, argv);
+	// if (!valid(result))
+    //     free(result); return NULL;
+	result->scheduler = type;
+	result->dongles = init_dongles(result);
+	if (!result->dongles)
+	{
+		free(result); return NULL;
+	}
+	result->coders = init_coders(result);
+	if (!result->coders)
+	{
+		i = result->coders_c;
+		while (i >= 0)
+			free_dongle(result->dongles[i--]);
+		free(result);
+		result = NULL;
+	}
+	return (result);
+}
+
 
 // not correct
 // void    init_threads(t_quantum_compiler *instance)

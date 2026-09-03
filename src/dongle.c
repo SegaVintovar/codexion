@@ -13,12 +13,13 @@ t_dongle	*dongle_new(int id)
     return new;
 }
 
-void dongle_lock(t_dongle *dongle)
+void dongle_lock(pthread_mutex_t *dongle, int coder_id, uint64_t curr_time)
 {
     if (dongle)
-        // dongle->locked = true;
-        pthread_mutex_lock(&dongle->mutex);
-		
+	{
+		pthread_mutex_lock(&dongle);
+		printf("%lu %i has taken a dongle\n", curr_time, coder_id);
+	}
 }
 
 void dongle_unlock(t_dongle * dongle)

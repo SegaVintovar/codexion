@@ -131,12 +131,12 @@ typedef struct s_coder
 {
     pthread_t   thread;
     int         id;
-    // t_state     *state; // do i need it?
     t_dongle    *left;
     t_dongle    *right;
     uint64_t	last_comp_t;
 	int			compiles_left;
     t_quantum_compiler  *state;
+	pthread_cond_t	stop_cond;
 }   t_coder;
 
 
@@ -169,34 +169,25 @@ typedef struct	s_quantum_compiler
     uint64_t    start_time;
 }	t_quantum_compiler;
 
-typedef struct s_thread_args
-{
-    t_coder             *coder;
-    t_quantum_compiler  *state;
-}   t_thread_args;
-
+// utils
 int		isint(char *arg);
 int 	ft_isdigit(int c);
 long	my_atoi(const char *nptr);
+uint64_t    curtime_full();
 
+// quantum compiler, dongle, coder methods
+t_quantum_compiler	*init_compiler(int argc, char **argv);
 t_dongle    **init_dongles(t_quantum_compiler *instance);
-t_coder *new_coder(int id, t_quantum_compiler *state);
-void    assign_dongles(t_coder *coder, t_quantum_compiler *state);
-t_coder **init_coders(t_quantum_compiler *state);
-
+t_coder 	*new_coder(int id, t_quantum_compiler *state);
+void    	assign_dongles(t_coder *coder, t_quantum_compiler *state);
+t_coder 	**init_coders(t_quantum_compiler *state);
 t_dongle	*dongle_new(int id);
 void        dongle_unlock(t_dongle *dongle);
-void        dongle_lock(t_dongle *dongle);
+void		dongle_lock(pthread_mutex_t *dongle, int coder_id, uint64_t curr_time);
 void        free_dongle(t_dongle *dongle);
-// void *simulation(t_coder *coder, t_quantum_compiler *state);
+
+// simulation
 void    *simulation(void *args);
-
-// quantum compiler methods
-t_quantum_compiler	*init_compiler(int argc, char **argv);
-void	start(t_quantum_compiler *instance);
 void    run(t_quantum_compiler *state);
-
-// time utils
-uint64_t    curtime_full();
 
 # endif

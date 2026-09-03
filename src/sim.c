@@ -25,35 +25,45 @@ uint64_t    time_scince_start(t_quantum_compiler *state)
 
 void    compiling(t_coder *coder, t_quantum_compiler *state)
 {
-    // check the time since last compile
+    // check if there are any compiles left to do and
+	// if so, then ->
+	// check the time since last compile
     uint64_t    t;
     // milisecnds into microseconds to pass it to thr usleep
-    t = time_scince_start(state);
-    // first start
-    if (coder->compiles_left == state->comp_c_r)
-    {
-        // pass
-        if (t > state->burnout_t){
-            // we got burnout
-        }
-    }
-    else if ((curtime_full() - coder->last_comp_t) > state->burnout_t && \
-        coder->compiles_left != state->comp_c_r)
-    {
-        // we got burnout
-        // send signal to stop all
-    }
-    // take dongles + update the time since last compile
-    pthread_mutex_lock(&coder->left->mutex);
-    pthread_mutex_lock(&coder->right->mutex);
-    coder->last_comp_t = curtime_full();
-    printf("%lu - %i has taken a dongle and started compiling\n", t, coder->id);
+	if (coder->compiles_left)
+	{
+		t = time_scince_start(state);
+		// first start
+		if (coder->compiles_left == state->comp_c_r)
+		{
+			// pass
+			coder->last_comp_t = curtime_full();
+			if (t > state->burnout_t)
+			{
+				// we got burnout
+			}
+		}
+		else if ((curtime_full() - coder->last_comp_t) > state->burnout_t && \
+			coder->compiles_left != state->comp_c_r)
+		{
+			// we got burnout
+			// send signal to stop all
+			// pthread_cond_broadcast(); or signal monitor thread???
+		}
+		// take dongles + update the time since last compile
+		// pthread_mutex_lock(&coder->left->mutex);
+		dongle_lock(&coder->right->mutex, coder->id, t);
+		dongle_lock(&coder->left->mutex, coder->id, t);
+		pthread_mutex_lock(&coder->right->mutex);
+		coder->last_comp_t = curtime_full();
+		printf("%lu - %i has taken a dongle and started compiling\n", t, coder->id);
 
-    usleep(converter((uint64_t)state->compile_t));
-    coder->compiles_left--;
+		usleep(converter((uint64_t)state->compile_t));
+		coder->compiles_left--;
 
-    pthread_mutex_unlock(&coder->left->mutex);
-    pthread_mutex_unlock(&coder->right->mutex);
+		pthread_mutex_unlock(&coder->left->mutex);
+		pthread_mutex_unlock(&coder->right->mutex);
+	}
 }
 
 void    refactoring(t_coder *coder, t_quantum_compiler *state)
@@ -81,12 +91,8 @@ void *simulation(void *coder)
     int                 i;
     t_coder             *c;
     t_quantum_compiler  *state;
-    // t_thread_args       *args;
 
     c =(t_coder *)coder;
-    // args = (t_thread_args *)argumnets;  // could not cast...
-    // coder = args->coder;
-    // state = args->state;
     i = 0;
     printf("Sim Start %i\n", c->id);
     // 
@@ -100,17 +106,6 @@ void *simulation(void *coder)
     return NULL;
 }
 
-// t_thread_args *setup_args(t_quantum_compiler *state)
-// {
-//     t_thread_args *args;
-
-//     args = malloc(sizeof(t_thread_args));
-// 	if (!args)
-// 		return NULL;
-//     args->state = state;
-//     args->state->start_time = curtime_full();
-//     return (args);
-// }
 
 void run(t_quantum_compiler *state)
 {
