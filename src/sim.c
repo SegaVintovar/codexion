@@ -88,7 +88,7 @@ void *simulation(void *argumnets)
     // state = args->state;
     i = 0;
     printf("Sim Start %i\n", args->coder->id);
-    args->state->start_time = curtime_full();
+    // 
     while (i < args->state->comp_c_r) // and there is no burnout signal
     {
         compiling(args->coder, args->state);
@@ -99,18 +99,28 @@ void *simulation(void *argumnets)
     return NULL;
 }
 
+t_thread_args *setup_args(t_quantum_compiler *state)
+{
+    t_thread_args *args;
+
+    args = malloc(sizeof(t_thread_args));
+	if (!args)
+		return NULL;
+    args->state = state;
+    args->state->start_time = curtime_full();
+    return (args);
+}
+
 void run(t_quantum_compiler *state)
 {
-    int                 i;
-    t_coder             *c;
-    t_thread_args       *args;
+    int             i;
+    t_coder         *c;
+    t_thread_args   *args;
 
-	args = malloc(sizeof(t_thread_args));
-	if (!args)
-		return;
-    args->state = state;
+    args = setup_args(state);
+    if (!args)
+        return;
     i = 0;
-	
     while (i < state->coders_c)
     {
         args->coder = state->coders[i];

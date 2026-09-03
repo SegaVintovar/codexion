@@ -103,8 +103,6 @@
 # include <stdint.h>
 
 
-
-
 typedef enum	e_state
 {
 	COMPILE,
@@ -119,13 +117,6 @@ typedef enum	e_scheduler
 	NONE
 }	t_scheduler;
 
-
-// typedef struct	s_dongle
-// {
-// 	bool	locked;
-// 	int		id;
-//     pthread_mutex_t mutex;
-// }	t_dongle;
 
 typedef struct	s_dongle {
     pthread_mutex_t		mutex;
