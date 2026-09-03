@@ -124,8 +124,8 @@ t_dongle    **init_dongles(t_quantum_compiler *instance)
 
 t_coder **init_coders(t_quantum_compiler *state)
 {
-    int i;
-    t_coder ** new_coders;
+    int     i;
+    t_coder **new_coders;
 
     new_coders = malloc(sizeof(t_coder *) * state->coders_c);
     if (!new_coders)

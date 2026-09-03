@@ -76,56 +76,57 @@ void    debugging(t_coder *coder, t_quantum_compiler *state)
 }
 
 // void *simulation(t_coder *coder, t_quantum_compiler *state)
-void *simulation(void *argumnets)
+void *simulation(void *coder)
 {
     int                 i;
-    t_coder             *coder;
+    t_coder             *c;
     t_quantum_compiler  *state;
-    t_thread_args       *args;
+    // t_thread_args       *args;
 
-    args = (t_thread_args *)argumnets;  // could not cast...
+    c =(t_coder *)coder;
+    // args = (t_thread_args *)argumnets;  // could not cast...
     // coder = args->coder;
     // state = args->state;
     i = 0;
-    printf("Sim Start %i\n", args->coder->id);
+    printf("Sim Start %i\n", c->id);
     // 
-    while (i < args->state->comp_c_r) // and there is no burnout signal
+    while (i < c->state->comp_c_r) // and there is no burnout signal
     {
-        compiling(args->coder, args->state);
-        refactoring(args->coder, args->state);
-        debugging(args->coder, args->state);
+        compiling(c, c->state);
+        refactoring(c, c->state);
+        debugging(c, c->state);
         i++;
     }
     return NULL;
 }
 
-t_thread_args *setup_args(t_quantum_compiler *state)
-{
-    t_thread_args *args;
+// t_thread_args *setup_args(t_quantum_compiler *state)
+// {
+//     t_thread_args *args;
 
-    args = malloc(sizeof(t_thread_args));
-	if (!args)
-		return NULL;
-    args->state = state;
-    args->state->start_time = curtime_full();
-    return (args);
-}
+//     args = malloc(sizeof(t_thread_args));
+// 	if (!args)
+// 		return NULL;
+//     args->state = state;
+//     args->state->start_time = curtime_full();
+//     return (args);
+// }
 
 void run(t_quantum_compiler *state)
 {
     int             i;
     t_coder         *c;
-    t_thread_args   *args;
+    // t_thread_args   *args;
 
-    args = setup_args(state);
-    if (!args)
-        return;
+    // args = setup_args(state);
+    // if (!args)
+    //     return;
     i = 0;
     while (i < state->coders_c)
     {
-        args->coder = state->coders[i];
+        // args- = state->coders[i];
         c = state->coders[i];
-        pthread_create(&state->coders[i]->thread, NULL, simulation, (void *)&args);
+        pthread_create(&state->coders[i]->thread, NULL, simulation, (void *)c);
         i++;
     }
 	// start monitor
@@ -137,6 +138,4 @@ void run(t_quantum_compiler *state)
         i++;
     }
 	// stop monitor
-	if (args)
-		free(args);
 }

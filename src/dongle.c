@@ -38,7 +38,6 @@ void free_dongle(t_dongle *dongle)
     }
 }
 
-void dongle_cd(t_dongle *dongle, uint64_t time2sleep)
-{
+void dongle_cd(t_dongle *dongle, uint64_t time2sleep){
     usleep(time2sleep);
 }

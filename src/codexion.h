@@ -103,12 +103,14 @@
 # include <stdint.h>
 
 
-typedef enum	e_state
-{
-	COMPILE,
-	REFACTOR,
-	DEBUG
-}	t_state;
+// typedef enum	e_state
+// {
+// 	COMPILE,
+// 	REFACTOR,
+// 	DEBUG
+// }	t_state;
+
+typedef struct s_quantum_compiler t_quantum_compiler;  // forward declaration
 
 typedef enum	e_scheduler
 {
@@ -129,11 +131,12 @@ typedef struct s_coder
 {
     pthread_t   thread;
     int         id;
-    t_state     *state; // do i need it?
+    // t_state     *state; // do i need it?
     t_dongle    *left;
     t_dongle    *right;
     uint64_t	last_comp_t;
 	int			compiles_left;
+    t_quantum_compiler  *state;
 }   t_coder;
 
 

@@ -9,6 +9,7 @@ t_coder *new_coder(int id, t_quantum_compiler *state)
         return NULL;
     new->id = id;
     new->compiles_left = state->comp_c_r;
+    new->state = state;
     return (new);
 }
 
