@@ -18,9 +18,11 @@ uint64_t    curtime_full()
 uint64_t    time_scince_start(t_quantum_compiler *state)
 {
     // uint64_t    curtime_f;
-    
+    uint64_t    result;
+
+    result = curtime_full() - state->start_time;
     // curtime_f = curtime_full();
-    return (curtime_full() - state->start_time);
+    return (result);
 }
 
 void    compiling(t_coder *coder, t_quantum_compiler *state)
@@ -54,13 +56,14 @@ void    compiling(t_coder *coder, t_quantum_compiler *state)
 		// pthread_mutex_lock(&coder->left->mutex);
 		dongle_lock(&coder->right->mutex, coder->id, t);
 		dongle_lock(&coder->left->mutex, coder->id, t);
-		pthread_mutex_lock(&coder->right->mutex);
+		// pthread_mutex_lock(&coder->right->mutex);
 		coder->last_comp_t = curtime_full();
-		printf("%lu - %i has taken a dongle and started compiling\n", t, coder->id);
+		printf("%lu - %i has taken started compiling\n", t, coder->id);
 
 		usleep(converter((uint64_t)state->compile_t));
 		coder->compiles_left--;
 
+        // make it like dongle_unlock()
 		pthread_mutex_unlock(&coder->left->mutex);
 		pthread_mutex_unlock(&coder->right->mutex);
 	}

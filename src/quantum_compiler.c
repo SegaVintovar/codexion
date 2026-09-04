@@ -105,43 +105,44 @@ t_coder **init_coders(t_quantum_compiler *state)
     return (new_coders);
 }
 
-t_quantum_compiler	*init_compiler(int argc, char **argv)
+int input_check(int argc, char **argv)
 {
-	int					i;
-	t_quantum_compiler	*result;
-	t_scheduler			type;
-
-    if (is_scheldue(argv[8]))
-	    type = what_is_our_scheldue(argv[8]);
-	else
-        return (NULL);
+    int i;
 
     i = 1;
     while (i < argc - 1)
     {
 		if (!isint(argv[i]))
         {
-			printf("isint\n"); return NULL;
+			printf("isint\n"); return 0;
         };
         i++;
     }
 	if (!int_max_and_positivity_check(argc, argv))
     {
-        printf("int max and positivity exit\n"); return NULL;
+        printf("int max and positivity exit\n"); return 0;
     }
+    return 1;
+}
 
-	result = malloc(sizeof(t_quantum_compiler));
+t_quantum_compiler	*init_compiler(int argc, char **argv)
+{
+	int					i;
+	t_quantum_compiler	*result;
+	t_scheduler			type;
+
+    if (is_scheldue(argv[8]) && input_check(argc, argv))
+	    type = what_is_our_scheldue(argv[8]);
+	else
+        return (NULL);
+    result = malloc(sizeof(t_quantum_compiler));
 	if (!result)
 		return (NULL);
 	assign_values(result, argc, argv);
-	// if (!valid(result))
-    //     free(result); return NULL;
 	result->scheduler = type;
 	result->dongles = init_dongles(result);
 	if (!result->dongles)
-	{
-		free(result); return NULL;
-	}
+        {free(result); return NULL;}
 	result->coders = init_coders(result);
 	if (!result->coders)
 	{
