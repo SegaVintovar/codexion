@@ -1,37 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   isint.c                                            :+:    :+:            */
+/*   input_check.c                                      :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2026/09/05 13:00:46 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/05 13:00:47 by vsudak        ########   odam.nl         */
+/*   Created: 2026/09/05 13:10:10 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/05 13:10:11 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "codexion.h"
-
-// sort of isnumber
-int	isint(char *arg)
-{
-	size_t	len;
-	size_t	p;
-
-	len = strlen(arg);
-	if (len < 1)
-		return (0);
-	p = 0;
-	while (arg[p] == ' ' || (arg[p] >= 9 && arg[p] <= 13))
-		p++;
-	if (arg[p] == '+' || arg[p] == '-')
-		p++;
-	while (p < len)
-	{
-		if (ft_isdigit((int)arg[p]))
-			p++;
-		else
-			return (0);
-	}
-	return (1);
-}

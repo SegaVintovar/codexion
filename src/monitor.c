@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   monitor.c                                          :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 13:00:40 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/05 13:00:41 by vsudak        ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 int check_thread(t_coder *coder, t_quantum_compiler *state)
@@ -18,15 +30,18 @@ void	*monitor(void *arg)
 	t_quantum_compiler *state;
 
 	state = (t_quantum_compiler *)arg;
-	i = 0;
-	sig = 1;
-	while (sig)
+	if (state->coders_c != 0)
 	{
-		if (i == state->coders_c)
-			i = 0;
-		if (check_thread(state->coders[i], state))
-			return ((void *)1);
-		i++;
+		i = 0;
+		sig = 1;
+		while (sig)
+		{
+			if (i == state->coders_c)
+				i = 0;
+			if (check_thread(state->coders[i], state))
+				return ((void *)1);
+			i++;
+		}
 	}
 	return (NULL);
 }

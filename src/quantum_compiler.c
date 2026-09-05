@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   quantum_compiler.c                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 13:00:58 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/05 13:05:33 by vsudak        ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 # include "codexion.h"
 
 t_scheduler what_is_our_scheldue(char *arg)
@@ -71,7 +83,6 @@ t_dongle    **init_dongles(t_quantum_compiler *instance)
             free(all_dongles);
 			return (NULL);
         }
-        // pthread_mutex_init(&all_dongles[i]->mutex, NULL);
 		i++;
 	}
     return (all_dongles);
@@ -114,13 +125,15 @@ int input_check(int argc, char **argv)
     {
 		if (!isint(argv[i]))
         {
-			printf("isint\n"); return 0;
-        };
+			printf("isint\n");
+			return 0;
+        }
         i++;
     }
 	if (!int_max_and_positivity_check(argc, argv))
     {
-        printf("int max and positivity exit\n"); return 0;
+        printf("int max and positivity exit\n");
+		return 0;
     }
     return 1;
 }
@@ -155,31 +168,3 @@ t_quantum_compiler	*init_compiler(int argc, char **argv)
     pthread_cond_init(&result->burnoutSignal, NULL);
 	return (result);
 }
-
-
-// not correct
-// void    init_threads(t_quantum_compiler *instance)
-// {
-//     int       i;
-//     pthread_t **coders;
-
-//     i = 0;
-//     coders = malloc(sizeof(pthread_t) * instance->coders_c);
-//     while (i < instance->coders_c)
-//     {
-//         // idk
-//         coders[i] = pthread_init();
-//         i++;
-//     }
-// }
-
-// // not used for now
-// void	start(t_quantum_compiler *instance)
-// {
-// 	// make threads and init dongles
-//     // start simulation
-// 	init_dongles(instance);
-//     init_treads(instance);
-
-// }
-
