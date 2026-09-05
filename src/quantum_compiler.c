@@ -152,7 +152,7 @@ t_quantum_compiler	*init_compiler(int argc, char **argv)
 		free(result);
 		result = NULL;
 	}
-    pthread_cond_init(result->burnoutSignal, NULL);
+    pthread_cond_init(&result->burnoutSignal, NULL);
 	return (result);
 }
 

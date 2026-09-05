@@ -168,7 +168,7 @@ typedef struct	s_quantum_compiler
     t_dongle        **dongles;
     t_coder   	    **coders;
     uint64_t        start_time;
-    pthread_cond_t  *burnoutSignal;
+    pthread_cond_t  burnoutSignal;
     pthread_t       monitor_tread;
 }	t_quantum_compiler;
 
@@ -185,6 +185,7 @@ int		isint(char *arg);
 int 	ft_isdigit(int c);
 long	my_atoi(const char *nptr);
 uint64_t    curtime_full();
+uint64_t    converter(uint64_t t);
 
 // quantum compiler, dongle, coder methods
 t_quantum_compiler	*init_compiler(int argc, char **argv);

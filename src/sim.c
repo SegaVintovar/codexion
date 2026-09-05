@@ -39,25 +39,19 @@ void    compiling(t_coder *coder, t_quantum_compiler *state)
 		if (coder->compiles_left == state->comp_c_r)
 		{
 			// pass
-			coder->last_comp_t = curtime_full();
-			if (t > state->burnout_t)
-			{
-                pthread_cond_signal(state->burnoutSignal);
-				// we got burnout
-                // pthread_mutex_lock();
-			}
+			// coder->last_comp_t = curtime_full();
+			if ((curtime_full() - state->start_time) > state->burnout_t) // ->
+                pthread_cond_signal(&state->burnoutSignal); // we got burnout
 		}
 		else if ((curtime_full() - coder->last_comp_t) > state->burnout_t && \
 			coder->compiles_left != state->comp_c_r)
 		{
 			// we got burnout
-            pthread_cond_signal(state->burnoutSignal);
-			// send signal to monitor so it will broadcast to all
-			// pthread_cond_broadcast(); or signal monitor thread???
+            pthread_cond_signal(&state->burnoutSignal);
+			// sent signal to monitor so it will broadcast to all
 		}
 		dongle_lock(&coder->right->mutex, coder->id, state->start_time);
 		dongle_lock(&coder->left->mutex, coder->id, state->start_time);
-		// pthread_mutex_lock(&coder->right->mutex);
 		coder->last_comp_t = curtime_full();
         t = coder->last_comp_t - state->start_time;
 		printf("%lu %i has started compiling\n", t, coder->id);
@@ -65,9 +59,8 @@ void    compiling(t_coder *coder, t_quantum_compiler *state)
 		usleep(converter((uint64_t)state->compile_t));
 		coder->compiles_left--;
 
-        // make it like dongle_unlock()
-        dongle_unlock(&coder->left, state->dongle_cd);
-        dongle_unlock(&coder->right, state->dongle_cd);
+        dongle_unlock(coder->left, state->dongle_cd);
+        dongle_unlock(coder->right, state->dongle_cd);
 	}
 }
 
@@ -130,7 +123,7 @@ void run(t_quantum_compiler *state)
         pthread_create(&state->coders[i]->thread, NULL, simulation, (void *)c);
         i++;
     }
-    start_monitor();
+    start_monitor(state);
 	// start monitor
     i = 0;
     while (i < state->coders_c)
@@ -139,6 +132,6 @@ void run(t_quantum_compiler *state)
         pthread_join(c->thread, NULL);
         i++;
     }
-    stop_monitor();
+    stop_monitor(state);
 	// stop monitor
 }

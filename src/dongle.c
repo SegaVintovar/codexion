@@ -29,8 +29,10 @@ void dongle_unlock(t_dongle * dongle, int cd_time)
 {
     if (dongle)
         // dongle->locked = false;
-        pthread_mutex_unlock(&dongle->mutex);
-        usleep(converter((uint64_t)dongle->));
+	{
+		pthread_mutex_unlock(&dongle->mutex);
+        usleep(converter((uint64_t)cd_time));
+	}
 }
 
 // this one will go into free all
@@ -41,8 +43,4 @@ void free_dongle(t_dongle *dongle)
         pthread_mutex_destroy(&dongle->mutex);
         free(dongle);
     }
-}
-
-void dongle_cd(t_dongle *dongle, uint64_t time2sleep){
-    usleep(time2sleep);
 }
