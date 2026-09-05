@@ -34,7 +34,7 @@ void    compiling(t_coder *coder, t_quantum_compiler *state)
     // milisecnds into microseconds to pass it to thr usleep
 	if (coder->compiles_left)
 	{
-		t = time_scince_start(state);
+		// t = time_scince_start(state);
 		// first start
 		if (coder->compiles_left == state->comp_c_r)
 		{
@@ -42,30 +42,32 @@ void    compiling(t_coder *coder, t_quantum_compiler *state)
 			coder->last_comp_t = curtime_full();
 			if (t > state->burnout_t)
 			{
+                pthread_cond_signal(state->burnoutSignal);
 				// we got burnout
+                // pthread_mutex_lock();
 			}
 		}
 		else if ((curtime_full() - coder->last_comp_t) > state->burnout_t && \
 			coder->compiles_left != state->comp_c_r)
 		{
 			// we got burnout
-			// send signal to stop all
+            pthread_cond_signal(state->burnoutSignal);
+			// send signal to monitor so it will broadcast to all
 			// pthread_cond_broadcast(); or signal monitor thread???
 		}
-		// take dongles + update the time since last compile
-		// pthread_mutex_lock(&coder->left->mutex);
-		dongle_lock(&coder->right->mutex, coder->id, t);
-		dongle_lock(&coder->left->mutex, coder->id, t);
+		dongle_lock(&coder->right->mutex, coder->id, state->start_time);
+		dongle_lock(&coder->left->mutex, coder->id, state->start_time);
 		// pthread_mutex_lock(&coder->right->mutex);
 		coder->last_comp_t = curtime_full();
-		printf("%lu - %i has taken started compiling\n", t, coder->id);
+        t = coder->last_comp_t - state->start_time;
+		printf("%lu %i has started compiling\n", t, coder->id);
 
 		usleep(converter((uint64_t)state->compile_t));
 		coder->compiles_left--;
 
         // make it like dongle_unlock()
-		pthread_mutex_unlock(&coder->left->mutex);
-		pthread_mutex_unlock(&coder->right->mutex);
+        dongle_unlock(&coder->left, state->dongle_cd);
+        dongle_unlock(&coder->right, state->dongle_cd);
 	}
 }
 
@@ -74,7 +76,7 @@ void    refactoring(t_coder *coder, t_quantum_compiler *state)
     uint64_t    t;
 
     t = time_scince_start(state);
-    printf("%lu - %i has started refactoring\n", t, coder->id);
+    printf("%lu %i has started refactoring\n", t, coder->id);
     usleep(converter((uint64_t)state->refactor_t));
     
 }
@@ -84,7 +86,7 @@ void    debugging(t_coder *coder, t_quantum_compiler *state)
     uint64_t    t;
 
     t = time_scince_start(state);
-    printf("%lu - %i has started debugging\n", t, coder->id);
+    printf("%lu %i has started debugging\n", t, coder->id);
     usleep(converter((uint64_t)state->debug_t));
 }
 
@@ -119,6 +121,7 @@ void run(t_quantum_compiler *state)
     // args = setup_args(state);
     // if (!args)
     //     return;
+    state->start_time = curtime_full();
     i = 0;
     while (i < state->coders_c)
     {
@@ -127,6 +130,7 @@ void run(t_quantum_compiler *state)
         pthread_create(&state->coders[i]->thread, NULL, simulation, (void *)c);
         i++;
     }
+    start_monitor();
 	// start monitor
     i = 0;
     while (i < state->coders_c)
@@ -135,5 +139,6 @@ void run(t_quantum_compiler *state)
         pthread_join(c->thread, NULL);
         i++;
     }
+    stop_monitor();
 	// stop monitor
 }

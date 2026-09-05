@@ -13,20 +13,24 @@ t_dongle	*dongle_new(int id)
     return new;
 }
 
-void dongle_lock(pthread_mutex_t *dongle, int coder_id, uint64_t curr_time)
+void dongle_lock(pthread_mutex_t *dongle, int coder_id, uint64_t start_time)
 {
+    uint64_t    t;
+
     if (dongle)
 	{
 		pthread_mutex_lock(dongle);
-		printf("%lu %i has taken a dongle\n", curr_time, coder_id);
+        t = curtime_full() - start_time;
+		printf("%lu %i has taken a dongle\n", t, coder_id);
 	}
 }
 
-void dongle_unlock(t_dongle * dongle)
+void dongle_unlock(t_dongle * dongle, int cd_time)
 {
     if (dongle)
         // dongle->locked = false;
         pthread_mutex_unlock(&dongle->mutex);
+        usleep(converter((uint64_t)dongle->));
 }
 
 // this one will go into free all

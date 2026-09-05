@@ -111,6 +111,7 @@
 // }	t_state;
 
 typedef struct s_quantum_compiler t_quantum_compiler;  // forward declaration
+typedef struct s_monitor t_monitor;
 
 typedef enum	e_scheduler
 {
@@ -156,18 +157,28 @@ typedef struct	s_queue
 
 typedef struct	s_quantum_compiler
 {
-	int			coders_c;
-	int			burnout_t;
-	int			compile_t;
-	int			debug_t;
-	int			refactor_t;
-	int			comp_c_r;
-	int			dongle_cd;
-	t_scheduler	scheduler;
-    t_dongle    **dongles;
-    t_coder   	**coders;
-    uint64_t    start_time;
+	int			    coders_c;
+	int			    burnout_t;
+	int			    compile_t;
+	int			    debug_t;
+	int			    refactor_t;
+	int			    comp_c_r;
+	int			    dongle_cd;
+	t_scheduler	    scheduler;
+    t_dongle        **dongles;
+    t_coder   	    **coders;
+    uint64_t        start_time;
+    pthread_cond_t  *burnoutSignal;
+    pthread_t       monitor_tread;
 }	t_quantum_compiler;
+
+typedef struct s_monitor
+{
+    /* data */
+    pthread_t   mon_tr;
+
+} t_monitor;
+
 
 // utils
 int		isint(char *arg);
@@ -182,12 +193,16 @@ t_coder 	*new_coder(int id, t_quantum_compiler *state);
 void    	assign_dongles(t_coder *coder, t_quantum_compiler *state);
 t_coder 	**init_coders(t_quantum_compiler *state);
 t_dongle	*dongle_new(int id);
-void        dongle_unlock(t_dongle *dongle);
-void		dongle_lock(pthread_mutex_t *dongle, int coder_id, uint64_t curr_time);
+void        dongle_unlock(t_dongle *dongle, int cd_time);
+void		dongle_lock(pthread_mutex_t *dongle, int coder_id, uint64_t start_time);
 void        free_dongle(t_dongle *dongle);
 
 // simulation
 void    *simulation(void *args);
 void    run(t_quantum_compiler *state);
+
+// monitor
+void	start_monitor(t_quantum_compiler *state);
+void    stop_monitor(t_quantum_compiler *state);
 
 # endif

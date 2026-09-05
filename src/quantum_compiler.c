@@ -71,7 +71,7 @@ t_dongle    **init_dongles(t_quantum_compiler *instance)
             free(all_dongles);
 			return (NULL);
         }
-        pthread_mutex_init(&all_dongles[i]->mutex, NULL);
+        // pthread_mutex_init(&all_dongles[i]->mutex, NULL);
 		i++;
 	}
     return (all_dongles);
@@ -152,6 +152,7 @@ t_quantum_compiler	*init_compiler(int argc, char **argv)
 		free(result);
 		result = NULL;
 	}
+    pthread_cond_init(result->burnoutSignal, NULL);
 	return (result);
 }
 
