@@ -6,7 +6,7 @@
 /*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 13:00:58 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/05 13:05:33 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/05 17:00:25 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,35 +20,6 @@ t_scheduler what_is_our_scheldue(char *arg)
         return (EDF);
 }
 
-int is_scheldue(char *arg)
-{
-    if (!strcmp(arg, "edf") || !strcmp(arg, "fifo"))
-    {
-        return (1);
-    }
-    else
-        return (0);
-}
-
-// check if all the args are under INT_MAX
-int	int_max_and_positivity_check(int argc, char **argv)
-{
-	long	tmp;
-	size_t	i;
-
-	i = 1;
-	while (i < argc - 2)
-	{
-		tmp = my_atoi(argv[i]);
-		if (tmp > INT_MAX || tmp < 0)
-        {
-            printf("int max test\n"); return (0);
-        }
-        i++;
-	}
-	return (1);
-}
-
 void	assign_values(t_quantum_compiler *result, int argc, char **argv)
 {
 	result->coders_c = (int)my_atoi(argv[1]);
@@ -58,6 +29,9 @@ void	assign_values(t_quantum_compiler *result, int argc, char **argv)
 	result->refactor_t = (int)my_atoi(argv[5]);
 	result->comp_c_r = (int)my_atoi(argv[6]);
 	result->dongle_cd = (int)my_atoi(argv[7]);
+	result->scheduler = what_is_our_scheldue(argv[8]);
+	result->should_stop = 0;
+	result->burnoutReported = 0;
 }
 
 t_dongle    **init_dongles(t_quantum_compiler *instance)
@@ -116,43 +90,17 @@ t_coder **init_coders(t_quantum_compiler *state)
     return (new_coders);
 }
 
-int input_check(int argc, char **argv)
-{
-    int i;
-
-    i = 1;
-    while (i < argc - 1)
-    {
-		if (!isint(argv[i]))
-        {
-			printf("isint\n");
-			return 0;
-        }
-        i++;
-    }
-	if (!int_max_and_positivity_check(argc, argv))
-    {
-        printf("int max and positivity exit\n");
-		return 0;
-    }
-    return 1;
-}
-
 t_quantum_compiler	*init_compiler(int argc, char **argv)
 {
 	int					i;
 	t_quantum_compiler	*result;
-	t_scheduler			type;
 
-    if (is_scheldue(argv[8]) && input_check(argc, argv))
-	    type = what_is_our_scheldue(argv[8]);
-	else
+    if (!is_scheldue(argv[8]) || !input_check(argc, argv))
         return (NULL);
     result = malloc(sizeof(t_quantum_compiler));
 	if (!result)
 		return (NULL);
 	assign_values(result, argc, argv);
-	result->scheduler = type;
 	result->dongles = init_dongles(result);
 	if (!result->dongles)
         {free(result); return NULL;}
@@ -166,5 +114,6 @@ t_quantum_compiler	*init_compiler(int argc, char **argv)
 		result = NULL;
 	}
     pthread_cond_init(&result->burnoutSignal, NULL);
+	pthread_mutex_init(&result->burnoutMutex, NULL);
 	return (result);
 }

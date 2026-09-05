@@ -6,53 +6,34 @@
 /*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 13:00:40 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/05 13:00:41 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/05 17:08:53 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-int check_thread(t_coder *coder, t_quantum_compiler *state)
-{
-	uint64_t now;
-
-	now = curtime_full();
-	if ((now - coder->last_comp_t) > state->burnout_t)
-		return 1;
-	else
-		return 0;
-}
-
 void	*monitor(void *arg)
 {
-	int sig;
-	int i;
 	t_quantum_compiler *state;
 
 	state = (t_quantum_compiler *)arg;
-	if (state->coders_c != 0)
+	pthread_mutex_lock(&state->burnoutMutex);
+	while (!state->burnoutReported)
 	{
-		i = 0;
-		sig = 1;
-		while (sig)
-		{
-			if (i == state->coders_c)
-				i = 0;
-			if (check_thread(state->coders[i], state))
-				return ((void *)1);
-			i++;
-		}
+		pthread_cond_wait(&state->burnoutSignal, &state->burnoutMutex);
 	}
-	return (NULL);
+	pthread_cond_broadcast(&state->burnoutSignal);
+	state->should_stop = 1;
+	pthread_mutex_unlock(&state->burnoutMutex);
+	return NULL;
 }
 
 void	start_monitor(t_quantum_compiler *state)
 {
-	// pthread_t	*mon_tr;
-	pthread_create(&state->monitor_tread, NULL, monitor, (void *)state);	
+	pthread_create(&state->monitor_thread, NULL, monitor, (void *)state);	
 }
 
 void    stop_monitor(t_quantum_compiler *state)
 {
-    pthread_join(state->monitor_tread, NULL);
+    pthread_join(state->monitor_thread, NULL);
 }

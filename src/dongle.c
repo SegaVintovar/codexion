@@ -6,7 +6,7 @@
 /*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 13:00:44 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/05 13:00:45 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/05 17:14:26 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ void dongle_unlock(t_dongle * dongle, int cd_time)
     if (dongle)
         // dongle->locked = false;
 	{
+		usleep(converter((uint64_t)cd_time));
 		pthread_mutex_unlock(&dongle->mutex);
-        usleep(converter((uint64_t)cd_time));
 	}
 }
 

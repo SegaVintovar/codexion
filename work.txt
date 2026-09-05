@@ -1,16 +1,21 @@
 1. getting parameters
-2. validating them - under which conditions coders gonna get a burnout
-3. init quantum compiler -> malloc dongles
-4. run as many threads as coders
+2. validating them
+3. init quantum compiler -> init dongles -> init coders
+4. run as many threads as coders plus one monitor thread
 5. worker function does:
-        - tries to take two dongles(how)
-    what to pass into the worker function? dongles that are related to the current coder
+        - looping through activities and checks broadcast before every loop or activity?
+		- 
+6. monitor does waiting for a signal and as soon as it received it broadcasts it to every thread
+7. 
+
 
 how to implement dongle cd?
 coder has to release the dongle and after that nobody can touch it
 
 
 extra thread for monitor
+it waits for the signal of the coder burnout and then it broadcasts all others to stop
+
 
 check thread_create return - EVERYWHERE!!!
 
