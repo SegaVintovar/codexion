@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                        +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/07/24 11:55:27 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/05 17:23:24 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/07 17:15:08 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ void    free_all(t_quantum_compiler *state)
         free_coders(state);
         pthread_cond_destroy(&state->burnoutSignal);
 		pthread_mutex_destroy(&state->burnoutMutex);
+		pthread_mutex_destroy(&state->print_m);
         free(state);
     }
 }
@@ -75,9 +76,9 @@ int	main(int argc, char **argv)
     if (!state)
         return (1);
     run(state);
-	if (state->burnoutReported)
-	{
-		printf("%lu %d got burnout\n", state->whenWeGotBurn, state->whoGotBurned);
-	}
+	// if (state->burnoutReported)
+	// {
+	// 	printf("%lu %d got burnout\n", state->whenWeGotBurn, state->whoGotBurned);
+	// }
     free_all(state);
 }

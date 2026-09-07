@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   sim.c                                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 13:00:53 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/07 11:09:21 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   sim.c                                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 13:00:53 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/07 18:36:33 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,45 +24,87 @@ void    burnoutReport(t_quantum_compiler *state, t_coder *coder)
 
 int burnoutReportCheck(t_quantum_compiler *state)
 {
-    atomic_int result;
+    int result;
     
     pthread_mutex_lock(&state->burnoutMutex);
     result = state->burnoutReported;
     pthread_mutex_unlock(&state->burnoutMutex);
-    return ((int)result);
+    return (result);
 }
 
-void    compiling(t_coder *coder, t_quantum_compiler *state)
+void	oneTwoMutex(t_coder *coder, pthread_mutex_t **first, pthread_mutex_t **second)
 {
-    uint64_t    t;
-    // int         reported;
+	if (coder->id == 0)
+	{
+		*first = &coder->left->mutex;
+		*second = &coder->right->mutex;
+	}
+	else
+	{
+		*first = &coder->right->mutex;
+		*second = &coder->left->mutex;
+	}
+}
 
-    // reported = burnoutReportCheck(state);
-
+// For compiling top check
+int	burnoutCheck(t_quantum_compiler *state, t_coder *coder)
+{
 	if (!coder->compiles_left || burnoutReportCheck(state))
-        return ;
+        return (1);
     if (coder->compiles_left == state->comp_c_r) // first start
     {
         if ((curtime_full() - state->start_time) > (uint64_t)state->burnout_t) // ->
-            burnoutReport(state, coder);
-    }
+            {
+				burnoutReport(state, coder);
+				return (1);
+			}
+	}
     else if ((curtime_full() - coder->last_comp_t) > \
         (uint64_t)state->burnout_t && \
         coder->compiles_left != state->comp_c_r)
     {
         burnoutReport(state, coder);
+		return (1);
     }
-    if (!burnoutReportCheck(state))
-        dongle_lock(&coder->right->mutex, coder->id, state->start_time);
-    else
-        return;
-    if (!burnoutReportCheck(state))
-        dongle_lock(&coder->left->mutex, coder->id, state->start_time);
-    else
-        return;
+	return (0);
+}
+
+
+void    compiling(t_coder *coder, t_quantum_compiler *state)
+{
+    // uint64_t    	t;
+	pthread_mutex_t	*first;
+	pthread_mutex_t	*second;
+
+
+	oneTwoMutex(coder, &first, &second);
+	if (first == second)
+		return (burnoutReport(state, coder));
+	if (burnoutCheck(state, coder))
+		return;
+	dongle_lock(first);
+	if (burnoutReportCheck(state))
+		return ((void)pthread_mutex_unlock(first));
+	else
+		safePrint(state, coder, "taken a dongle");
+	dongle_lock(second);
+	if (burnoutReportCheck(state))
+	{
+		pthread_mutex_unlock(first);
+		pthread_mutex_unlock(second);
+		return;
+	}
+	else
+	{
+		safePrint(state, coder, "taken a dongle");
+		// t = curtime_full() - state->start_time;
+		// printf("%lu %i has taken a dongle\n", t, coder->id);
+	}
     coder->last_comp_t = curtime_full();
-    t = coder->last_comp_t - state->start_time;
-    printf("%lu %i has started compiling\n", t, coder->id);
+	safePrint(state, coder, "started compiling");
+    // t = coder->last_comp_t - state->start_time;
+    // printf("%lu %i has started compiling\n", t, coder->id);
+	
     usleep(converter((uint64_t)state->compile_t));
     coder->compiles_left--;
     dongle_unlock(coder->left, state->dongle_cd);
@@ -71,20 +113,14 @@ void    compiling(t_coder *coder, t_quantum_compiler *state)
 
 void    refactoring(t_coder *coder, t_quantum_compiler *state)
 {
-    uint64_t    t;
-
-    t = time_scince_start(state);
-    printf("%lu %i has started refactoring\n", t, coder->id);
+	safePrint(state, coder, "started refactoring");
     usleep(converter((uint64_t)state->refactor_t));
     
 }
 
 void    debugging(t_coder *coder, t_quantum_compiler *state)
 {
-    uint64_t    t;
-
-    t = time_scince_start(state);
-    printf("%lu %i has started debugging\n", t, coder->id);
+	safePrint(state, coder, "started debugging");
     usleep(converter((uint64_t)state->debug_t));
 }
 
@@ -109,6 +145,13 @@ void *simulation(void *coder)
          debugging(c, c->state);
         i++;
     }
+	if (c->state->comp_c_r == i)
+	{
+		pthread_mutex_lock(&c->state->burnoutMutex);
+		c->state->codersFinished += 1;
+		pthread_cond_signal(&c->state->burnoutSignal);
+		pthread_mutex_unlock(&c->state->burnoutMutex);
+	}
     return NULL;
 }
 
@@ -122,10 +165,22 @@ void run(t_quantum_compiler *state)
     i = 0;
     while (i < state->coders_c)
     {
-        // args- = state->coders[i];
-        c = state->coders[i];
-        pthread_create(&state->coders[i]->thread, NULL, simulation, (void *)c);
+		if (i % 2 == 0)
+		{
+			c = state->coders[i];
+			pthread_create(&state->coders[i]->thread, NULL, simulation, (void *)c);
+		}
         i++;
+    }
+    i = 0;
+    while (i < state->coders_c)
+    {
+		if (i % 2 != 0)
+		{
+			c = state->coders[i];
+			pthread_create(&state->coders[i]->thread, NULL, simulation, (void *)c);
+		}
+		i++;
     }
     i = 0;
     while (i < state->coders_c)

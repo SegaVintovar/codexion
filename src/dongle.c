@@ -6,7 +6,7 @@
 /*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 13:00:44 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/05 17:14:26 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/07 16:42:24 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,22 +25,15 @@ t_dongle	*dongle_new(int id)
     return new;
 }
 
-void dongle_lock(pthread_mutex_t *dongle, int coder_id, uint64_t start_time)
+void dongle_lock(pthread_mutex_t *dongle)
 {
-    uint64_t    t;
-
     if (dongle)
-	{
 		pthread_mutex_lock(dongle);
-        t = curtime_full() - start_time;
-		printf("%lu %i has taken a dongle\n", t, coder_id);
-	}
 }
 
 void dongle_unlock(t_dongle * dongle, int cd_time)
 {
     if (dongle)
-        // dongle->locked = false;
 	{
 		usleep(converter((uint64_t)cd_time));
 		pthread_mutex_unlock(&dongle->mutex);

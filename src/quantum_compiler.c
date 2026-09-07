@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   quantum_compiler.c                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 13:00:58 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/06 14:43:01 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   quantum_compiler.c                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 13:00:58 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/07 17:14:24 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	assign_values(t_quantum_compiler *result, char **argv)
 	result->comp_c_r = (int)my_atoi(argv[6]);
 	result->dongle_cd = (int)my_atoi(argv[7]);
 	result->scheduler = what_is_our_scheldue(argv[8]);
-	result->should_stop = 0;
+	result->codersFinished = 0;
 	result->burnoutReported = 0;
 }
 
@@ -115,5 +115,6 @@ t_quantum_compiler	*init_compiler(int argc, char **argv)
 	}
     pthread_cond_init(&result->burnoutSignal, NULL);
 	pthread_mutex_init(&result->burnoutMutex, NULL);
+	pthread_mutex_init(&result->print_m, NULL);
 	return (result);
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   codexion.h                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 15:12:47 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/07 10:55:11 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   codexion.h                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 15:12:47 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/07 18:36:50 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <limits.h>
 # include <sys/time.h>
 # include <stdint.h>
-# include <stdatomic.h>
+// # include <stdatomic.h>
 
 
 
@@ -89,11 +89,13 @@ typedef struct	s_quantum_compiler
 	
     pthread_cond_t  burnoutSignal;
     pthread_t       monitor_thread;
-	int				should_stop;
-	atomic_int		burnoutReported; // atomic int didnt help
+	// int				should_stop;
+	int				burnoutReported; // atomic int didnt help
 	pthread_mutex_t	burnoutMutex;
 	int				whoGotBurned;
 	uint64_t		whenWeGotBurn;
+	int				codersFinished;
+	pthread_mutex_t	print_m;
 }	t_quantum_compiler;
 
 
@@ -118,7 +120,7 @@ void    	assign_dongles(t_coder *coder, t_quantum_compiler *state);
 t_coder 	**init_coders(t_quantum_compiler *state);
 t_dongle	*dongle_new(int id);
 void        dongle_unlock(t_dongle *dongle, int cd_time);
-void		dongle_lock(pthread_mutex_t *dongle, int coder_id, uint64_t start_time);
+void		dongle_lock(pthread_mutex_t *dongle);
 void        free_dongle(t_dongle *dongle);
 
 // simulation
@@ -128,5 +130,7 @@ void    run(t_quantum_compiler *state);
 // monitor
 void	start_monitor(t_quantum_compiler *state);
 void    stop_monitor(t_quantum_compiler *state);
+
+void	safePrint(t_quantum_compiler *state, t_coder *coder, char *stage);
 
 # endif
