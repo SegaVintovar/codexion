@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   quantum_compiler.c                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 13:00:58 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/05 17:00:25 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   quantum_compiler.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 13:00:58 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/06 14:43:01 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,13 @@ t_scheduler what_is_our_scheldue(char *arg)
         return (EDF);
 }
 
-void	assign_values(t_quantum_compiler *result, int argc, char **argv)
+void	assign_values(t_quantum_compiler *result, char **argv)
 {
 	result->coders_c = (int)my_atoi(argv[1]);
     result->burnout_t = (int)my_atoi(argv[2]);
 	result->compile_t = (int)my_atoi(argv[3]);
-    result->debug_t = (int)my_atoi(argv[4]);
-	result->refactor_t = (int)my_atoi(argv[5]);
+    result->refactor_t = (int)my_atoi(argv[4]);
+	result->debug_t = (int)my_atoi(argv[5]);
 	result->comp_c_r = (int)my_atoi(argv[6]);
 	result->dongle_cd = (int)my_atoi(argv[7]);
 	result->scheduler = what_is_our_scheldue(argv[8]);
@@ -100,7 +100,7 @@ t_quantum_compiler	*init_compiler(int argc, char **argv)
     result = malloc(sizeof(t_quantum_compiler));
 	if (!result)
 		return (NULL);
-	assign_values(result, argc, argv);
+	assign_values(result, argv);
 	result->dongles = init_dongles(result);
 	if (!result->dongles)
         {free(result); return NULL;}

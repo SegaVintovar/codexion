@@ -8,7 +8,7 @@ all:
 	$(CC) SRC/. -o NAME
 
 compile:
-	cc src/* -g -pthread
+	cc -Wall -Wextra -pthread -o NAME src/*.c
 
 clean:
 	rm src/codexion.h.gch

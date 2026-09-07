@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   codexion.h                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 15:12:47 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/05 17:21:10 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   codexion.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 15:12:47 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/07 10:55:11 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include <limits.h>
 # include <sys/time.h>
 # include <stdint.h>
+# include <stdatomic.h>
+
 
 
 typedef struct s_quantum_compiler t_quantum_compiler;  // forward declaration
@@ -88,7 +90,7 @@ typedef struct	s_quantum_compiler
     pthread_cond_t  burnoutSignal;
     pthread_t       monitor_thread;
 	int				should_stop;
-	int				burnoutReported;
+	atomic_int		burnoutReported; // atomic int didnt help
 	pthread_mutex_t	burnoutMutex;
 	int				whoGotBurned;
 	uint64_t		whenWeGotBurn;

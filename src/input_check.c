@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   input_check.c                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 13:10:10 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/05 15:22:43 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   input_check.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 13:10:10 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/06 14:38:12 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	isint(char *arg)
 int	int_max_and_positivity_check(int argc, char **argv)
 {
 	long	tmp;
-	size_t	i;
+	int     i;
 
 	i = 1;
 	while (i < argc - 2)
