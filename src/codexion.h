@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   codexion.h                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 15:12:47 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/07 18:36:50 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   codexion.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 15:12:47 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/08 10:54:23 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,8 +119,8 @@ t_coder 	*new_coder(int id, t_quantum_compiler *state);
 void    	assign_dongles(t_coder *coder, t_quantum_compiler *state);
 t_coder 	**init_coders(t_quantum_compiler *state);
 t_dongle	*dongle_new(int id);
-void        dongle_unlock(t_dongle *dongle, int cd_time);
-void		dongle_lock(pthread_mutex_t *dongle);
+void        dongle_unlock(t_dongle *dongle);
+void		dongle_lock(t_dongle *dongle);
 void        free_dongle(t_dongle *dongle);
 
 // simulation

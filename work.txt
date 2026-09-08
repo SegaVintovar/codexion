@@ -20,3 +20,11 @@ it waits for the signal of the coder burnout and then it broadcasts all others t
 check thread_create return - EVERYWHERE!!!
 
 
+https://valgrind.org/docs/manual/hg-manual.html
+POSIX requires that implementations of standard I/O (printf, fprintf, fwrite, fread, etc) are thread safe.
+Unfortunately GNU libc implements this by using internal locking primitives that Helgrind is unable to intercept.
+Consequently Helgrind generates many false race reports when you use these functions.
+
+Helgrind attempts to hide these errors using the standard Valgrind error-suppression mechanism.
+So, at least for simple test cases, you don't see any.
+Nevertheless, some may slip through. Just something to be aware of.

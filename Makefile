@@ -2,17 +2,29 @@ NAME = codexion
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-SRC = src
+SRC = src/coder.c \
+	src/dongle.c \
+	src/input_check.c \
+	src/main.c \
+	src/monitor.c \
+	src/my_atoi.c \
+	src/quantum_compiler.c \
+	src/safePrint.c \
+	src/sim.c \
+	src/time.c
 
 all:
-	$(CC) SRC/. -o NAME
+	$(CC) $(SRC) -o $(NAME)
 
 compile:
-	cc -Wall -Wextra -pthread -o NAME src/*.c
+	$(CC) $(CFLAGS) -pthread -o $(NAME) $(SRC)
 
 clean:
 	rm src/codexion.h.gch
 
 fclean:
+	rm src/codexion.h.gch
+	rm codexion
 
 re:
+	

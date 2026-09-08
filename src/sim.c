@@ -1,17 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   sim.c                                              :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 13:00:53 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/07 18:36:33 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   sim.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 13:00:53 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/08 11:04:07 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
+// here we are reporting about burnout(stop)
 void    burnoutReport(t_quantum_compiler *state, t_coder *coder)
 {
     pthread_mutex_lock(&state->burnoutMutex);
@@ -22,6 +23,7 @@ void    burnoutReport(t_quantum_compiler *state, t_coder *coder)
     pthread_mutex_unlock(&state->burnoutMutex);
 }
 
+// here we are checking if burnout was already reported
 int burnoutReportCheck(t_quantum_compiler *state)
 {
     int result;
@@ -32,21 +34,7 @@ int burnoutReportCheck(t_quantum_compiler *state)
     return (result);
 }
 
-void	oneTwoMutex(t_coder *coder, pthread_mutex_t **first, pthread_mutex_t **second)
-{
-	if (coder->id == 0)
-	{
-		*first = &coder->left->mutex;
-		*second = &coder->right->mutex;
-	}
-	else
-	{
-		*first = &coder->right->mutex;
-		*second = &coder->left->mutex;
-	}
-}
-
-// For compiling top check
+// For compiling top check if current coder is not burnedout
 int	burnoutCheck(t_quantum_compiler *state, t_coder *coder)
 {
 	if (!coder->compiles_left || burnoutReportCheck(state))
@@ -69,53 +57,68 @@ int	burnoutCheck(t_quantum_compiler *state, t_coder *coder)
 	return (0);
 }
 
+// here we are getting reed of deadlock
+// basically first coder takes dongles in different order
+void	oneTwoMutex(t_coder *coder, t_dongle **first, t_dongle **second)
+{
+	if (coder->left->id < coder->right->id)
+	{
+	    *first = coder->left;
+		*second = coder->right;
+	}
+	else
+	{
+		*first = coder->right;
+		*second = coder->left;
+	}
+}
 
+// First stop of our routine
+// the most difficult one, cause of access to the shared dongles
 void    compiling(t_coder *coder, t_quantum_compiler *state)
 {
-    // uint64_t    	t;
-	pthread_mutex_t	*first;
-	pthread_mutex_t	*second;
+	t_dongle	*first;
+	t_dongle	*second;
 
-
+    // first = NULL;
+    // second = NULL;
 	oneTwoMutex(coder, &first, &second);
 	if (first == second)
-		return (burnoutReport(state, coder));
+    {
+        usleep(converter((uint64_t)state->burnout_t));
+        return (burnoutReport(state, coder));    
+    }
+	
 	if (burnoutCheck(state, coder))
 		return;
 	dongle_lock(first);
 	if (burnoutReportCheck(state))
-		return ((void)pthread_mutex_unlock(first));
+		return ((void)pthread_mutex_unlock(&first->mutex));
 	else
 		safePrint(state, coder, "taken a dongle");
 	dongle_lock(second);
 	if (burnoutReportCheck(state))
 	{
-		pthread_mutex_unlock(first);
-		pthread_mutex_unlock(second);
+		pthread_mutex_unlock(&first->mutex);
+		pthread_mutex_unlock(&second->mutex);
 		return;
 	}
 	else
-	{
 		safePrint(state, coder, "taken a dongle");
-		// t = curtime_full() - state->start_time;
-		// printf("%lu %i has taken a dongle\n", t, coder->id);
-	}
     coder->last_comp_t = curtime_full();
 	safePrint(state, coder, "started compiling");
-    // t = coder->last_comp_t - state->start_time;
-    // printf("%lu %i has started compiling\n", t, coder->id);
-	
     usleep(converter((uint64_t)state->compile_t));
     coder->compiles_left--;
-    dongle_unlock(coder->left, state->dongle_cd);
-    dongle_unlock(coder->right, state->dongle_cd);
+    coder->left->avaliable_at = curtime_full() + (uint64_t)state->dongle_cd;
+    dongle_unlock(coder->left);
+    coder->right->avaliable_at = curtime_full() + (uint64_t)state->dongle_cd;
+    dongle_unlock(coder->right);
 }
 
 void    refactoring(t_coder *coder, t_quantum_compiler *state)
 {
 	safePrint(state, coder, "started refactoring");
     usleep(converter((uint64_t)state->refactor_t));
-    
 }
 
 void    debugging(t_coder *coder, t_quantum_compiler *state)
@@ -132,8 +135,6 @@ void *simulation(void *coder)
 
     c =(t_coder *)coder;
     i = 0;
-    // printf("Sim Start %i\n", c->id);
-    // 
     while (i < c->state->comp_c_r && !burnoutReportCheck(c->state)) // and there is no burnout signal
     {
         compiling(c, c->state);
@@ -152,7 +153,7 @@ void *simulation(void *coder)
 		pthread_cond_signal(&c->state->burnoutSignal);
 		pthread_mutex_unlock(&c->state->burnoutMutex);
 	}
-    return NULL;
+    return (NULL);
 }
 
 void run(t_quantum_compiler *state)

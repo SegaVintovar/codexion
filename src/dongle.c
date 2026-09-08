@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   dongle.c                                           :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 13:00:44 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/07 16:42:24 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   dongle.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 13:00:44 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/08 11:54:38 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,24 @@ t_dongle	*dongle_new(int id)
     return new;
 }
 
-void dongle_lock(pthread_mutex_t *dongle)
+void dongle_lock(t_dongle *dongle)
 {
+    uint64_t    now;
+
     if (dongle)
-		pthread_mutex_lock(dongle);
+    {
+		pthread_mutex_lock(&dongle->mutex);
+        now = curtime_full();
+        if (dongle->avaliable_at > now)
+            usleep(dongle->avaliable_at - now);
+    }
 }
 
-void dongle_unlock(t_dongle * dongle, int cd_time)
+void dongle_unlock(t_dongle * dongle)
 {
     if (dongle)
 	{
-		usleep(converter((uint64_t)cd_time));
+        
 		pthread_mutex_unlock(&dongle->mutex);
 	}
 }
