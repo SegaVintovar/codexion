@@ -6,14 +6,14 @@
 /*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/05 13:00:53 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/08 11:04:07 by vs               ###   ########.fr       */
+/*   Updated: 2026/09/10 10:46:30 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
 // here we are reporting about burnout(stop)
-void    burnoutReport(t_quantum_compiler *state, t_coder *coder)
+void    burnoutReport(t_quantum_compiler *state, t_coder *coder, uint64_t *marge)
 {
     pthread_mutex_lock(&state->burnoutMutex);
     state->burnoutReported = 1;
@@ -42,10 +42,10 @@ int	burnoutCheck(t_quantum_compiler *state, t_coder *coder)
     if (coder->compiles_left == state->comp_c_r) // first start
     {
         if ((curtime_full() - state->start_time) > (uint64_t)state->burnout_t) // ->
-            {
-				burnoutReport(state, coder);
-				return (1);
-			}
+        {
+            burnoutReport(state, coder);
+            return (1);
+        }
 	}
     else if ((curtime_full() - coder->last_comp_t) > \
         (uint64_t)state->burnout_t && \
@@ -91,12 +91,12 @@ void    compiling(t_coder *coder, t_quantum_compiler *state)
 	
 	if (burnoutCheck(state, coder))
 		return;
-	dongle_lock(first);
+	dongle_lock(first, coder);
 	if (burnoutReportCheck(state))
 		return ((void)pthread_mutex_unlock(&first->mutex));
 	else
 		safePrint(state, coder, "taken a dongle");
-	dongle_lock(second);
+	dongle_lock(second, coder);
 	if (burnoutReportCheck(state))
 	{
 		pthread_mutex_unlock(&first->mutex);

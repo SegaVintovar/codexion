@@ -17,7 +17,7 @@ all:
 	$(CC) $(SRC) -o $(NAME)
 
 compile:
-	$(CC) $(CFLAGS) -pthread -o $(NAME) $(SRC)
+	$(CC) $(CFLAGS) -pthread -g -o $(NAME) $(SRC)
 
 clean:
 	rm src/codexion.h.gch

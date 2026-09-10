@@ -28,3 +28,6 @@ Consequently Helgrind generates many false race reports when you use these funct
 Helgrind attempts to hide these errors using the standard Valgrind error-suppression mechanism.
 So, at least for simple test cases, you don't see any.
 Nevertheless, some may slip through. Just something to be aware of.
+
+
+

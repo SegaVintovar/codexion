@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/05 15:12:47 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/08 10:54:23 by vs               ###   ########.fr       */
+/*   Updated: 2026/09/10 10:46:51 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 
 typedef struct s_quantum_compiler t_quantum_compiler;  // forward declaration
 typedef struct s_monitor t_monitor;
+typedef struct s_coder t_coder;
 
 typedef enum	e_scheduler
 {
@@ -43,6 +44,8 @@ typedef struct	s_dongle {
     pthread_mutex_t		mutex;
     uint64_t			avaliable_at;
     int                 id;
+    t_coder             **queue;
+    
 }   t_dongle;
 
 
@@ -118,9 +121,9 @@ t_dongle    **init_dongles(t_quantum_compiler *instance);
 t_coder 	*new_coder(int id, t_quantum_compiler *state);
 void    	assign_dongles(t_coder *coder, t_quantum_compiler *state);
 t_coder 	**init_coders(t_quantum_compiler *state);
-t_dongle	*dongle_new(int id);
+t_dongle	*dongle_new(int id); 
 void        dongle_unlock(t_dongle *dongle);
-void		dongle_lock(t_dongle *dongle);
+void		dongle_lock(t_dongle *dongle, t_coder *coder);
 void        free_dongle(t_dongle *dongle);
 
 // simulation
@@ -132,5 +135,9 @@ void	start_monitor(t_quantum_compiler *state);
 void    stop_monitor(t_quantum_compiler *state);
 
 void	safePrint(t_quantum_compiler *state, t_coder *coder, char *stage);
+int     burnoutReportCheck(t_quantum_compiler *state);
+void    burnoutReport(t_quantum_compiler *state, t_coder *coder, uint64_t marge);
+int     burnoutCheck(t_quantum_compiler *state, t_coder *coder);
+
 
 # endif

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/07/24 11:55:27 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/07 17:15:08 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/24 11:55:27 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/08 19:39:03 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,25 @@ void    free_all(t_quantum_compiler *state)
     }
 }
 
+// to allocate the queue
+// void    queueStart(t_quantum_compiler *state)
+// {
+//     int i;
+
+    
+    
+//     if (state->scheduler == EDF)
+//     {
+//         // here we need a checker that will tell us which coder is closer to burnout   
+//     }
+//     else
+//     {
+//         // here we can have a queue
+//     }
+//     i = 0;
+    
+// }
+
 int	main(int argc, char **argv)
 {
     t_quantum_compiler  *state;
@@ -75,6 +94,7 @@ int	main(int argc, char **argv)
     state = init_compiler(argc, argv);
     if (!state)
         return (1);
+    // queueStart(state);
     run(state);
 	// if (state->burnoutReported)
 	// {
