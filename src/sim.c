@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                        +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 13:00:53 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/10 18:47:19 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/10 19:01:30 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,12 +137,13 @@ void dropDongles(t_coder *coder)
 	uint64_t	now;
 	uint64_t	avail_at;
 
-	pthread_mutex_unlock(&coder->left->mutex);
-	pthread_mutex_unlock(&coder->right->mutex);
 	now = curtime_full();
 	avail_at = now + coder->state->dongle_cd;
 	coder->left->avaliable_at = avail_at;
 	coder->right->avaliable_at = avail_at;
+	pthread_mutex_unlock(&coder->left->mutex);
+	pthread_mutex_unlock(&coder->right->mutex);
+
 }
 
 int	dongleAcquisition(t_coder *coder)
@@ -164,13 +165,13 @@ int	dongleAcquisition(t_coder *coder)
 	if (isBurned(coder->state, coder) == 1)
 		return (1);
 	pthread_mutex_lock(&first->mutex);
-	safePrint(coder->state, coder, "taken dongle");
+	safePrint(coder->state, coder, "taken first dongle");
 	if (isBurned(coder->state, coder) == 1)
 		return (pthread_mutex_unlock(&first->mutex), 1);
 	// we got it, but how long did it take to get a dongle
 	// so we are checking burnout again
 	pthread_mutex_lock(&second->mutex);
-	safePrint(coder->state, coder, "taken dongle");
+	safePrint(coder->state, coder, "taken second dongle");
 	// check again, because dongle could be buzy or on cd
 	if (isBurned(coder->state, coder) == 1)
 		return (dropDongles(coder), 1);
