@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   quantum_compiler.c                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 13:00:58 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/09 09:34:18 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   quantum_compiler.c                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 13:00:58 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/10 13:48:23 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ t_scheduler what_is_our_scheldue(char *arg)
         return (EDF);
 }
 
+// 
 void	assign_values(t_quantum_compiler *result, char **argv)
 {
 	result->coders_c = (int)my_atoi(argv[1]);
@@ -86,6 +87,7 @@ t_coder **init_coders(t_quantum_compiler *state)
             return NULL;
         }
         assign_dongles(new_coders[i], state);
+		pthread_mutex_init(&new_coders[i]->time_check, NULL);
         i++;
     }
     return (new_coders);

@@ -6,7 +6,7 @@
 /*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 13:00:40 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/07 17:27:41 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/10 18:44:36 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	*monitor(void *arg)
 		pthread_mutex_lock(&state->print_m);
 		printf("%lu %d got burnout\n", state->whenWeGotBurn, state->whoGotBurned);
 		pthread_mutex_unlock(&state->print_m);
-	}	
+	}
 	pthread_mutex_unlock(&state->burnoutMutex);
 	return NULL;
 }

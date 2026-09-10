@@ -1,7 +1,7 @@
 NAME = codexion
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -pthread -g -o
 SRC = src/coder.c \
 	src/dongle.c \
 	src/input_check.c \
@@ -11,13 +11,13 @@ SRC = src/coder.c \
 	src/quantum_compiler.c \
 	src/safePrint.c \
 	src/sim.c \
-	src/time.c
-
+	src/time.c \
+	src/burnOutCheck.c
 all:
 	$(CC) $(SRC) -o $(NAME)
 
 compile:
-	$(CC) $(CFLAGS) -pthread -g -o $(NAME) $(SRC)
+	$(CC) $(CFLAGS) $(NAME) $(SRC)
 
 clean:
 	rm src/codexion.h.gch

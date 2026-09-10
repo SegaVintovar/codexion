@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/24 11:55:27 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/08 19:39:03 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/07/24 11:55:27 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/10 14:01:57 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,11 @@ void    free_coders(t_quantum_compiler *state)
             while (i < state->coders_c)
             {
                 if (state->coders[i])
+				{
+					pthread_mutex_destroy(&state->coders[i]->time_check);
                     free(state->coders[i]);
-                i++;
+                }
+				i++;
             }
             free(state->coders);
         }
@@ -94,11 +97,8 @@ int	main(int argc, char **argv)
     state = init_compiler(argc, argv);
     if (!state)
         return (1);
-    // queueStart(state);
+
     run(state);
-	// if (state->burnoutReported)
-	// {
-	// 	printf("%lu %d got burnout\n", state->whenWeGotBurn, state->whoGotBurned);
-	// }
+
     free_all(state);
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   dongle.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 13:00:44 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/09 18:51:45 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   dongle.c                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 13:00:44 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/10 15:52:09 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,10 @@ void dongle_lock(t_dongle *dongle, t_coder *coder)
         was_locked = 0;
 		pthread_mutex_lock(&dongle->mutex);
         if (burnoutCheck(coder->state, coder))
-            {
-                pthread_mutex_unlock(&dongle->mutex);
-                return ;
-            }
+		{
+			pthread_mutex_unlock(&dongle->mutex);
+			return ;
+		}
         was_locked = 1;
         now = curtime_full();
         if (dongle->avaliable_at > now)
@@ -56,7 +56,7 @@ void dongle_lock(t_dongle *dongle, t_coder *coder)
             time2sleep = dongle->avaliable_at - now;
             if (dongle->avaliable_at - coder->last_comp_t > (uint64_t)coder->state->burnout_t)
             {
-                burnoutReport(coder->state, coder);
+                burnoutReport(coder->state, coder, (uint64_t)0);
                 return ((void)pthread_mutex_unlock(&dongle->mutex));
             }
         }
