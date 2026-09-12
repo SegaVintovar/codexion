@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   quantum_compiler.c                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 13:00:58 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/11 18:39:11 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   quantum_compiler.c                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 13:00:58 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/12 17:12:41 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ t_scheduler what_is_our_scheldue(char *arg)
         return (EDF);
 }
 
-// 
 void	assign_values(t_quantum_compiler *result, char **argv)
 {
 	result->coders_c = (int)my_atoi(argv[1]);
@@ -53,11 +52,9 @@ t_dongle    **init_dongles(t_quantum_compiler *instance)
             while (i >= 0)
             {
                 free(all_dongles[i]->queue);
-                free(all_dongles[i]);
-                i--;
+                free(all_dongles[i--]);
             }
-            free(all_dongles);
-			return (NULL);
+			return (free(all_dongles), NULL);
         }
 		i++;
 	}
@@ -71,7 +68,7 @@ t_coder **init_coders(t_quantum_compiler *state)
 
     new_coders = malloc(sizeof(t_coder *) * state->coders_c);
     if (!new_coders)
-        return NULL;
+        return (NULL);
     i = 0;
     while (i < state->coders_c)
     {
@@ -80,11 +77,8 @@ t_coder **init_coders(t_quantum_compiler *state)
         {
             i--;
             while (i >= 0)
-            {
                 free(new_coders[i--]);
-            }
-            free(new_coders);
-            return NULL;
+            return (free(new_coders), NULL);
         }
         assign_dongles(new_coders[i], state);
 		pthread_mutex_init(&new_coders[i]->time_check, NULL);
@@ -92,6 +86,14 @@ t_coder **init_coders(t_quantum_compiler *state)
         i++;
     }
     return (new_coders);
+}
+
+void	init_mutexes_n_conds(t_quantum_compiler *state)
+{
+	pthread_cond_init(&state->burnoutSignal, NULL);
+	pthread_mutex_init(&state->burnoutMutex, NULL);
+    // pthread_mutex_init(&state->state_mutex, NULL);
+	pthread_mutex_init(&state->print_m, NULL);
 }
 
 t_quantum_compiler	*init_compiler(int argc, char **argv)
@@ -107,20 +109,15 @@ t_quantum_compiler	*init_compiler(int argc, char **argv)
 	assign_values(result, argv);
 	result->dongles = init_dongles(result);
 	if (!result->dongles)
-        {free(result); return NULL;}
+        return (free(result), NULL);
 	result->coders = init_coders(result);
 	if (!result->coders)
 	{
 		i = result->coders_c;
 		while (i >= 0)
 			free_dongle(result->dongles[i--]);
-		free(result);
-		return (NULL);
+		return (free(result), NULL);
 	}
-    pthread_cond_init(&result->burnoutSignal, NULL);
-    // pthread_cond_init(&result->);
-	pthread_mutex_init(&result->burnoutMutex, NULL);
-    pthread_mutex_init(&result->state_mutex, NULL);
-	pthread_mutex_init(&result->print_m, NULL);
+	init_mutexes_n_conds(result);
 	return (result);
 }

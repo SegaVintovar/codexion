@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/24 11:55:27 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/11 18:39:36 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/07/24 11:55:27 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/12 17:12:32 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void    free_all(t_quantum_compiler *state)
         pthread_cond_destroy(&state->burnoutSignal);
 		pthread_mutex_destroy(&state->burnoutMutex);
 		pthread_mutex_destroy(&state->print_m);
-        pthread_mutex_destroy(&state->state_mutex);
+        // pthread_mutex_destroy(&state->state_mutex);
         free(state);
     }
 }

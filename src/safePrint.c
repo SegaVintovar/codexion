@@ -6,7 +6,7 @@
 /*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/07 17:10:05 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/10 18:02:54 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/12 16:09:30 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,6 @@ void	safePrint(t_quantum_compiler *state, t_coder *coder, char *stage)
 
 	pthread_mutex_lock(&state->print_m);
 	t = curtime_full() - state->start_time;
-    printf("%lu %i has %s\n", t, coder->id, stage); // coder id + 1
+    printf("%lu %i has %s\n", t, (coder->id + 1), stage); // coder id + 1
 	pthread_mutex_unlock(&state->print_m);
 }

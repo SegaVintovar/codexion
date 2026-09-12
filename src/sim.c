@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   sim.c                                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 13:00:53 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/11 18:41:51 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   sim.c                                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 13:00:53 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/12 18:23:35 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,9 +141,48 @@ void dropDongles(t_coder *coder)
 	avail_at = now + coder->state->dongle_cd;
 	coder->left->avaliable_at = avail_at;
 	coder->right->avaliable_at = avail_at;
-	pthread_mutex_unlock(&coder->left->mutex);
-	pthread_mutex_unlock(&coder->right->mutex);
+	if (coder->left == coder->right)
+	{
+		pthread_mutex_unlock(&coder->left->mutex);
+	}
+	else
+	{
+		pthread_mutex_unlock(&coder->left->mutex);
+		pthread_mutex_unlock(&coder->right->mutex);
+	}
+	
+}
 
+// will it be burned at the during dongle_cd
+int	willBeBurned(t_coder *coder, t_dongle *dongle)
+{
+	if (coder->last_comp_t + coder->state->burnout_t < dongle->avaliable_at)
+		return (1);
+	else
+		return (0);	
+}
+
+// here i am sleeping till end of the dongle cd or coder`s bo
+uint64_t	sleep_cd(t_dongle *dongle, t_coder *coder)
+{
+	uint64_t	to_sleep;
+	uint64_t 	now;
+	uint64_t	bot;
+
+	now = curtime_full();
+	if (willBeBurned(coder, dongle))
+	{
+		bot = coder->last_comp_t + (uint64_t)coder->state->burnout_t;
+		// printf("now - %lu, bot - %lu\n", now, bot);
+		// to_sleep = coder->last_comp_t + (uint64_t)coder->state->burnout_t - now;
+		to_sleep = bot - now;
+	}
+	else
+		to_sleep = dongle->avaliable_at - now;
+	printf("%lu\n", to_sleep);
+	if (now < to_sleep)
+		return (0);
+	return (to_sleep);
 }
 
 int	dongleAcquisition(t_coder *coder)
@@ -151,50 +190,55 @@ int	dongleAcquisition(t_coder *coder)
 	t_dongle	*first;
 	t_dongle	*second;
 	uint64_t	now;
+	uint64_t	to_sleep;
 
 	oneTwoMutex(coder, &first, &second);
-	// checking when the dongle is avaliable
-	// we can expect burnout while we are waiting for the dongle to become avaliable
-	// it could be locked or (avaliable_at > now)
-	// avaliable at
-	now = curtime_full();
-	pthread_mutex_lock(&first->mutex);
-	if (first->avaliable_at > now) // data race ;-(
-		usleep(first->avaliable_at - now);
-	if (isBurned(coder->state, coder) == 1)
-		return (1);
 	
+	pthread_mutex_lock(&first->mutex);
+	now = curtime_full();
+	if (first->avaliable_at > now)
+		usleep(converter(sleep_cd(first, coder)));
+	// what if i will check when both are avaliable
+	// then usleep for the ()time
+	if (isBurned(coder->state, coder) == 1)
+		return (pthread_mutex_unlock(&first->mutex), 1);
 	safePrint(coder->state, coder, "taken first dongle");
 	if (isBurned(coder->state, coder) == 1)
 		return (pthread_mutex_unlock(&first->mutex), 1);
 	// we got it, but how long did it take to get a dongle
 	// so we are checking burnout again
-	pthread_mutex_lock(&second->mutex);
-	safePrint(coder->state, coder, "taken second dongle");
+	if (second != first)
+		pthread_mutex_lock(&second->mutex);
+	else
+		usleep(converter(coder->state->burnout_t));
+	if (second->avaliable_at > now)
+		usleep(converter(sleep_cd(first, coder)));
 	// check again, because dongle could be buzy or on cd
-	// if (isBurned(coder->state, coder) == 1)
-	// 	return (dropDongles(coder), 1);
+	if (isBurned(coder->state, coder) == 1)
+		return (dropDongles(coder), 1);
+	else
+		safePrint(coder->state, coder, "taken second dongle");
 	return (0);
 }
 
 void coderFinished(t_quantum_compiler *state)
 {
-    pthread_mutex_lock(&state->state_mutex);
+    pthread_mutex_lock(&state->burnoutMutex);
     state->codersFinished++;
-    pthread_mutex_unlock(&state->state_mutex);
+	if (state->coders_c == state->codersFinished)
+		pthread_cond_signal(&state->burnoutSignal);
+    pthread_mutex_unlock(&state->burnoutMutex);
 }
 
 void *sim(void *coder)
 {
 	int					i;
     t_coder				*c;
-	t_quantum_compiler	*state;
 	
 	c =(t_coder *)coder;
 	c->last_comp_t = curtime_full();
-    state = c->state;
 	i = 0;
-	while (i < state->comp_c_r && !isBurned(state, coder))
+	while (i < c->state->comp_c_r && !isBurned(c->state, coder))
 	{
 		if (dongleAcquisition(c) == 1)
 			return (burnoutReport(c->state, coder, 0), NULL);
@@ -208,9 +252,9 @@ void *sim(void *coder)
 			return (burnoutReport(c->state, coder, 0), NULL);
 		i++;
 	}
-    coderFinished(state);
-    if (i == state->comp_c_r)
-        {pthread_cond_signal(&c->stop_cond);}
+    coderFinished(c->state);
+    // if (i == c->state->comp_c_r)
+    //     {pthread_cond_signal(&c->stop_cond);}
 	return (NULL);
 }
 
@@ -234,7 +278,6 @@ void run(t_quantum_compiler *state)
     int             i;
     t_coder         *c;
 
-    
 	start_monitor(state);
 	set_the_time(state);
     i = 0;

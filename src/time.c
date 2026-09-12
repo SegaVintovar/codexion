@@ -6,18 +6,19 @@
 /*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 15:04:25 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/05 15:15:04 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/12 17:28:54 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
+// to convert from miliseconds into microseconds
 uint64_t    converter(uint64_t t)
 {
 	return (t * 1000);
 }
 
-
+// return full current time in miliseconds
 uint64_t    curtime_full()
 {
     struct timeval		curtime;
