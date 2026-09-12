@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   monitor.c                                          :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 13:00:40 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/10 18:44:36 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   monitor.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 13:00:40 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/11 19:07:47 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@ void	*monitor(void *arg)
 	t_quantum_compiler *state;
 
 	state = (t_quantum_compiler *)arg;
-	pthread_mutex_lock(&state->burnoutMutex);
+	pthread_mutex_lock(&state->state_mutex);
 	
 	while (!state->burnoutReported && state->coders_c > state->codersFinished)
 	{
-		pthread_cond_wait(&state->burnoutSignal, &state->burnoutMutex);
+		pthread_cond_wait(&state->burnoutSignal, &state->state_mutex);
 	}
-	pthread_cond_broadcast(&state->burnoutSignal);
+	// pthread_cond_broadcast(&state->burnoutSignal);
 	state->burnoutReported = 1;
 	
 	if (state->burnoutReported && state->coders_c != state->codersFinished)
@@ -32,7 +32,7 @@ void	*monitor(void *arg)
 		printf("%lu %d got burnout\n", state->whenWeGotBurn, state->whoGotBurned);
 		pthread_mutex_unlock(&state->print_m);
 	}
-	pthread_mutex_unlock(&state->burnoutMutex);
+	pthread_mutex_unlock(&state->state_mutex);
 	return NULL;
 }
 

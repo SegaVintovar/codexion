@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   quantum_compiler.c                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 13:00:58 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/10 13:48:23 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   quantum_compiler.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 13:00:58 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/11 18:39:11 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ t_coder **init_coders(t_quantum_compiler *state)
         }
         assign_dongles(new_coders[i], state);
 		pthread_mutex_init(&new_coders[i]->time_check, NULL);
+        pthread_cond_init(&new_coders[i]->stop_cond, NULL);
         i++;
     }
     return (new_coders);
@@ -114,10 +115,12 @@ t_quantum_compiler	*init_compiler(int argc, char **argv)
 		while (i >= 0)
 			free_dongle(result->dongles[i--]);
 		free(result);
-		result = NULL;
+		return (NULL);
 	}
     pthread_cond_init(&result->burnoutSignal, NULL);
+    // pthread_cond_init(&result->);
 	pthread_mutex_init(&result->burnoutMutex, NULL);
+    pthread_mutex_init(&result->state_mutex, NULL);
 	pthread_mutex_init(&result->print_m, NULL);
 	return (result);
 }

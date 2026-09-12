@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   sim.c                                              :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 13:00:53 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/10 19:01:30 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   sim.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 13:00:53 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/11 18:41:51 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,19 +152,18 @@ int	dongleAcquisition(t_coder *coder)
 	t_dongle	*second;
 	uint64_t	now;
 
-	// deadlock avoidance
 	oneTwoMutex(coder, &first, &second);
 	// checking when the dongle is avaliable
 	// we can expect burnout while we are waiting for the dongle to become avaliable
 	// it could be locked or (avaliable_at > now)
 	// avaliable at
 	now = curtime_full();
-	
+	pthread_mutex_lock(&first->mutex);
 	if (first->avaliable_at > now) // data race ;-(
 		usleep(first->avaliable_at - now);
 	if (isBurned(coder->state, coder) == 1)
 		return (1);
-	pthread_mutex_lock(&first->mutex);
+	
 	safePrint(coder->state, coder, "taken first dongle");
 	if (isBurned(coder->state, coder) == 1)
 		return (pthread_mutex_unlock(&first->mutex), 1);
@@ -173,9 +172,16 @@ int	dongleAcquisition(t_coder *coder)
 	pthread_mutex_lock(&second->mutex);
 	safePrint(coder->state, coder, "taken second dongle");
 	// check again, because dongle could be buzy or on cd
-	if (isBurned(coder->state, coder) == 1)
-		return (dropDongles(coder), 1);
+	// if (isBurned(coder->state, coder) == 1)
+	// 	return (dropDongles(coder), 1);
 	return (0);
+}
+
+void coderFinished(t_quantum_compiler *state)
+{
+    pthread_mutex_lock(&state->state_mutex);
+    state->codersFinished++;
+    pthread_mutex_unlock(&state->state_mutex);
 }
 
 void *sim(void *coder)
@@ -192,20 +198,19 @@ void *sim(void *coder)
 	{
 		if (dongleAcquisition(c) == 1)
 			return (burnoutReport(c->state, coder, 0), NULL);
-		// simple check now + comp_t < deadline || burnoutReportCheck()
 		if (new_comp(coder) == 1)
 			return (dropDongles(coder), burnoutReport(c->state, coder, 0), NULL);
 		else
 			dropDongles(coder);
-		if (debugging(coder, state) == 1)
+		if (debugging(coder, c->state) == 1)
 			return (burnoutReport(c->state, coder, 0), NULL);
-		// simple check now + debug_t < deadline || burnoutReportCheck()
-		// simple check now + refactor_t < deadline || burnoutReportCheck()
-		if (refactoring(coder, state) == 1)
+		if (refactoring(coder, c->state) == 1)
 			return (burnoutReport(c->state, coder, 0), NULL);
-		state->codersFinished++;
 		i++;
 	}
+    coderFinished(state);
+    if (i == state->comp_c_r)
+        {pthread_cond_signal(&c->stop_cond);}
 	return (NULL);
 }
 

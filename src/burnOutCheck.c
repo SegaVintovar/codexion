@@ -1,7 +1,16 @@
 #include "codexion.h"
 
+int simIsFinished(t_coder *coder)
+{
+    
+    if (coder->state->coders_c == coder->state->codersFinished)
+        return (1);
+    else
+        return (0);
+}
 // check if coder is burnedout 
 // I dont report here!!!
+// or not finished
 int isBurned(t_quantum_compiler *state, t_coder *coder)
 {
     uint64_t    now;
@@ -9,11 +18,18 @@ int isBurned(t_quantum_compiler *state, t_coder *coder)
 	// int 		bo;
 
 	// bo = 0;
-	pthread_mutex_lock(&coder->time_check);
+
+	pthread_mutex_lock(&coder->state->state_mutex);
+    if ((coder->state->coders_c == coder->state->codersFinished))
+        {
+            pthread_cond_signal(&state->burnoutSignal);
+            pthread_mutex_unlock(&coder->state->state_mutex);
+            return (1);
+        }
 	now = curtime_full();
 	last_comp = coder->last_comp_t;
 	// bo = coder->state->burnoutReported;
-	pthread_mutex_unlock(&coder->time_check);
+	pthread_mutex_unlock(&coder->state->state_mutex);
     // if it has happend
     if (now - last_comp >= (uint64_t)state->burnout_t)
 		return (1);

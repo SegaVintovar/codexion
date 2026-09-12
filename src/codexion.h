@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   codexion.h                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 15:12:47 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/10 17:48:43 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   codexion.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 15:12:47 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/11 18:38:13 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,8 @@ typedef struct	s_quantum_compiler
 	int				whoGotBurned;
 	uint64_t		whenWeGotBurn;
 	int				codersFinished;
+
+    pthread_mutex_t state_mutex;
 	// to print safely
 	pthread_mutex_t	print_m;
 }	t_quantum_compiler;
