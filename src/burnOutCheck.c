@@ -78,8 +78,8 @@ int burnoutReportCheck(t_quantum_compiler *state)
 //             return (1);
 //         }
 // 	}
-//     else if ((curtime_full() - coder->last_comp_t) > \
-//         (uint64_t)state->burnout_t && \
+//     else if ((curtime_full() - coder->last_comp_t) > 
+//         (uint64_t)state->burnout_t && 
 //         coder->compiles_left != state->comp_c_r)
 //     {
 //         burnoutReport(state, coder, 0);

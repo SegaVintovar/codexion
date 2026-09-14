@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   dongle.c                                           :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 13:00:44 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/12 15:55:40 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   dongle.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 13:00:44 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/14 09:40:10 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 t_dongle	*dongle_new(int id)
 {
     t_dongle    *new;
-    t_coder     *queue[2];
 
     new = malloc(sizeof(t_dongle));
     if  (!new)
@@ -23,12 +22,14 @@ t_dongle	*dongle_new(int id)
     // new->locked = false;
     new->id = id;
     new->avaliable_at = 0;
-    new->queue = queue;
-    if (!new->queue)
-    {
-        free(new);
-        return (NULL);
-    }
+    new->buzy = 0;
+    new->queue = NULL;
+    // assign coders for each dongle
+    // if (!new->queue)
+    // {
+    //     free(new);
+    //     return (NULL);
+    // }
     pthread_mutex_init(&new->mutex, NULL);
     return new;
 }
