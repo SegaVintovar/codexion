@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                        +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 13:00:58 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/12 17:12:41 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/14 19:02:42 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,7 @@ t_dongle    **init_dongles(t_quantum_compiler *instance)
         {
             i--;
             while (i >= 0)
-            {
-                free(all_dongles[i]->queue);
                 free(all_dongles[i--]);
-            }
 			return (free(all_dongles), NULL);
         }
 		i++;

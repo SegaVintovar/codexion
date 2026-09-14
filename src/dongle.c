@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   dongle.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 13:00:44 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/14 09:40:10 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   dongle.c                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 13:00:44 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/14 18:24:58 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,57 +23,13 @@ t_dongle	*dongle_new(int id)
     new->id = id;
     new->avaliable_at = 0;
     new->buzy = 0;
-    new->queue = NULL;
-    // assign coders for each dongle
-    // if (!new->queue)
-    // {
-    //     free(new);
-    //     return (NULL);
-    // }
+    new->next = NULL;
     pthread_mutex_init(&new->mutex, NULL);
     return new;
 }
 
-// not in use anymore
-// void dongle_lock(t_dongle *dongle, t_coder *coder)
-// {
-//     uint64_t    now;
-//     uint64_t    time2sleep;
-//     int         was_locked;
-    
-//     time2sleep = 0;
-//     if (dongle)
-//     {
-//         was_locked = 0;
-// 		pthread_mutex_lock(&dongle->mutex);
-//         if (burnoutCheck(coder->state, coder))
-// 		{
-// 			pthread_mutex_unlock(&dongle->mutex);
-// 			return ;
-// 		}
-//         was_locked = 1;
-//         now = curtime_full();
-//         if (dongle->avaliable_at > now)
-//         {
-//             time2sleep = dongle->avaliable_at - now;
-//             if (dongle->avaliable_at - coder->last_comp_t > (uint64_t)coder->state->burnout_t)
-//             {
-//                 burnoutReport(coder->state, coder, (uint64_t)0);
-//                 return ((void)pthread_mutex_unlock(&dongle->mutex));
-//             }
-//         }
-//         if (time2sleep != 0)
-//         {
-//             dongle_unlock(dongle);
-//             was_locked = 0;
-//             usleep(converter(time2sleep));
-//         }
-//         if (!was_locked)
-//             pthread_mutex_lock(&dongle->mutex); 
-//     }
-// }
 
-void dongle_unlock(t_dongle * dongle)
+void	dongle_unlock(t_dongle * dongle)
 {
     if (dongle)
 	{
@@ -82,11 +38,48 @@ void dongle_unlock(t_dongle * dongle)
 }
 
 // this one will go into free all
-void free_dongle(t_dongle *dongle)
+void	free_dongle(t_dongle *dongle)
 {
     if (dongle)
     {
         pthread_mutex_destroy(&dongle->mutex);
         free(dongle);
     }
+}
+
+void dropDongles(t_coder *coder)
+{
+	uint64_t	now;
+	uint64_t	avail_at;
+
+	now = curtime_full();
+	avail_at = now + coder->state->dongle_cd;
+	coder->left->avaliable_at = avail_at;
+	coder->right->avaliable_at = avail_at;
+	if (coder->left == coder->right)
+	{
+		pthread_mutex_unlock(&coder->left->mutex);
+	}
+	else
+	{
+		pthread_mutex_unlock(&coder->left->mutex);
+		pthread_mutex_unlock(&coder->right->mutex);
+	}
+}
+
+int grabDOngle(t_dongle *first, t_coder *coder)
+{
+    uint64_t	now;
+    
+    pthread_mutex_lock(&first->mutex);
+	now = curtime_full();
+	if (first->avaliable_at > now)
+		usleep(converter(sleep_cd(first, coder, now)));
+	if (isBurned(coder->state, coder) == 1)
+		return (pthread_mutex_unlock(&first->mutex), 1);
+	safePrint(coder->state, coder, "taken dongle");
+    first->buzy = 1;
+	if (isBurned(coder->state, coder) == 1)
+		return (pthread_mutex_unlock(&first->mutex), 1);
+    return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 15:04:25 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/12 17:28:54 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/14 18:30:20 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,4 +35,37 @@ uint64_t    time_scince_start(t_quantum_compiler *state)
 
     result = curtime_full() - state->start_time;
     return (result);
+}
+
+// here we are setting the start time for the state and for all coders
+void	set_the_time(t_quantum_compiler *state)
+{
+	uint64_t	now;
+	int			i;
+	now = curtime_full();
+	state->start_time = now;
+	i = 0;
+	while (i < state->coders_c)
+	{
+		state->coders[i]->last_comp_t = now;
+		i++;
+	}
+}
+
+// here i am sleeping till end of the dongle cd or coder`s bo
+uint64_t	sleep_cd(t_dongle *dongle, t_coder *coder, uint64_t now)
+{
+	uint64_t	to_sleep;
+	uint64_t	bot;
+
+    bot = coder->last_comp_t + (uint64_t)coder->state->burnout_t;
+    if (bot > now)
+    {
+        if (willBeBurned(coder, dongle))
+            to_sleep = bot - now;
+        else
+            to_sleep = dongle->avaliable_at - now;
+        return (to_sleep);
+    }
+    return (0);
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   codexion.h                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 15:12:47 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/14 09:38:35 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   codexion.h                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 15:12:47 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/14 18:44:02 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@
 // # include <stdatomic.h>
 
 
-
 typedef struct s_quantum_compiler t_quantum_compiler;  // forward declaration
 typedef struct s_monitor t_monitor;
 typedef struct s_coder t_coder;
+
 
 typedef enum	e_scheduler
 {
@@ -45,8 +45,7 @@ typedef struct	s_dongle {
     uint64_t			avaliable_at;
     int                 id;
     int                 buzy;
-    t_coder             *queue;
-    
+    t_coder             *next;
 }   t_dongle;
 
 
@@ -66,19 +65,12 @@ typedef struct s_coder
 }   t_coder;
 
 
-// for scheldue
-typedef struct  s_queue_node
-{
-    t_coder                *coders;
-    struct s_queue_node    *next;
-    struct s_queue_node    *last;
-    struct s_queue_node    *head;
-}   t_queue_node;
-
+// for scheldue or I dont need it
 typedef struct	s_queue
 {
-	t_coder			*coder;
+	t_coder			**coder;
 }	t_queue;
+
 
 typedef struct	s_quantum_compiler
 {
@@ -111,12 +103,13 @@ typedef struct	s_quantum_compiler
 
 
 // time / utils
-int		isint(char *arg);
-int 	ft_isdigit(int c);
-long	my_atoi(const char *nptr);
+int			isint(char *arg);
+int 		ft_isdigit(int c);
+long		my_atoi(const char *nptr);
 uint64_t    curtime_full();
 uint64_t    time_scince_start(t_quantum_compiler *state);
 uint64_t    converter(uint64_t t);
+void		set_the_time(t_quantum_compiler *state);
 
 // input_check
 int is_scheldue(char *arg);
@@ -131,13 +124,20 @@ void    	assign_dongles(t_coder *coder, t_quantum_compiler *state);
 t_coder 	**init_coders(t_quantum_compiler *state);
 t_dongle	*dongle_new(int id); 
 void        dongle_unlock(t_dongle *dongle);
-void		dongle_lock(t_dongle *dongle, t_coder *coder);
+// void		dongle_lock(t_dongle *dongle, t_coder *coder);
 void        free_dongle(t_dongle *dongle);
 int			dongleAcquisition(t_coder *coder);
+void		dropDongles(t_coder *coder);
+int			grabDOngle(t_dongle *first, t_coder *coder);
 
 // simulation
-void    *simulation(void *args);
-void    run(t_quantum_compiler *state);
+void    	*simulation(void *args);
+void    	run(t_quantum_compiler *state);
+uint64_t	sleep_cd(t_dongle *dongle, t_coder *coder, uint64_t now);
+int			new_comp(t_coder *coder);
+int    		refactoring(t_coder *coder, t_quantum_compiler *state);
+int    		debugging(t_coder *coder, t_quantum_compiler *state);
+void		coderFinished(t_quantum_compiler *state);
 
 // monitor
 void	start_monitor(t_quantum_compiler *state);
@@ -149,7 +149,7 @@ void	safePrint(t_quantum_compiler *state, t_coder *coder, char *stage);
 int     burnoutReportCheck(t_quantum_compiler *state);
 // if burnout has happend then we are using this fn to send a signal to the monitor thread
 void    burnoutReport(t_quantum_compiler *state, t_coder *coder, uint64_t marge);
-
+int		willBeBurned(t_coder *coder, t_dongle *dongle);
 // these functions have same purpose = they are checking for the burnout of the current coder
 int     burnoutCheck(t_quantum_compiler *state, t_coder *coder);
 int		isBurned(t_quantum_compiler *state, t_coder *coder);

@@ -12,9 +12,11 @@ SRC = src/coder.c \
 	src/safePrint.c \
 	src/sim.c \
 	src/time.c \
-	src/burnOutCheck.c
+	src/burnOutCheck.c \
+	src/routine_steps.c \
+	src/queue.c
 all:
-	$(CC) $(SRC) -o $(NAME)
+	$(CC) $(SRC) $(NAME)
 
 compile:
 	$(CC) $(CFLAGS) $(NAME) $(SRC)
