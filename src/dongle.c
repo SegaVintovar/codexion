@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                        +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 13:00:44 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/14 18:24:58 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/15 18:06:35 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ void dropDongles(t_coder *coder)
 	avail_at = now + coder->state->dongle_cd;
 	coder->left->avaliable_at = avail_at;
 	coder->right->avaliable_at = avail_at;
+	coder->left->avaliable_at = avail_at;
+	coder->right->buzy = 0;
 	if (coder->left == coder->right)
 	{
 		pthread_mutex_unlock(&coder->left->mutex);

@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                        +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 15:12:47 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/14 18:44:02 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/15 17:47:48 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,11 @@ typedef struct s_coder
 
 
 // for scheldue or I dont need it
+// I have to implement priority queue
 typedef struct	s_queue
 {
 	t_coder			**coder;
+	int				size; // or always keep it as size 2?
 }	t_queue;
 
 

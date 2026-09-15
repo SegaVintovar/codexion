@@ -32,3 +32,5 @@ Nevertheless, some may slip through. Just something to be aware of.
 
 
 dongle request
+edf - priority key is last_comp_t
+fifo - priority key is request time.

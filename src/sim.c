@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                        +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 13:00:53 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/14 19:23:55 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/15 18:31:51 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,8 @@ void *sim(void *coder)
 		if (dongleAcquisition(c) == 1)
 			return (burnoutReport(c->state, coder, 0), NULL);
 		if (new_comp(coder) == 1)
-			return (dropDongles(coder), burnoutReport(c->state, coder, 0), NULL);
+			return (dropDongles(coder), burnoutReport(c->state, coder, 0), \
+			NULL);
 		else
 			dropDongles(coder);
 		if (debugging(coder, c->state) == 1)
@@ -100,6 +101,17 @@ void	start_batch_of_coders(t_quantum_compiler *state, int batch)
     }
 }
 
+// void	start_all_threads(t_quantum_compiler *state)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (i < state->coders)
+// 	{
+// 		pthread_create(&state->coders[i]->thread, NULL, sim, (void *)c);
+// 		i++;
+// 	}
+// }
 
 void run(t_quantum_compiler *state)
 {
