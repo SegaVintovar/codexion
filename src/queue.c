@@ -1,27 +1,76 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   queue.c                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/14 18:16:17 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/14 19:22:05 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   queue.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/14 18:16:17 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/16 21:50:57 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void	whoIsNext(t_dongle *dongle, t_quantum_compiler *state)
+// returns address of the memory where we will store two pointers of our queue
+t_coder **initQueue()
 {
-	t_coder *next;
+    t_coder **result;
+    
+    result = malloc(sizeof(t_queue *) * 2);
+    if (!result)
+        return (NULL);
+    result = (t_coder **)memset((void *)result, 0, sizeof(t_coder *) * 2);
+    return (result);
+}
 
-	if (state->scheduler == EDF)
-	{
-		
-	}
-	else
-	{
-		
-	}
+void    destroyQueue(t_coder **queue)
+{
+    free(queue);
+}
+
+void    swap(t_coder **queue)
+{
+    t_coder *tmp;
+    
+    tmp = queue[0];
+    queue[0] = queue[1];
+    queue[1] = tmp;
+}
+
+// add coder to the queue
+void enque(t_dongle *dongle, t_coder *coder)
+{
+    pthread_mutex_lock(&dongle->mutex);
+    if (dongle->queue[0])
+        dongle->queue[1] = coder;
+    else
+        dongle->queue[0] = coder;
+    if (coder->state->scheduler == EDF)
+    {
+        // sort of heapify
+        if (dongle->queue[0] && dongle->queue[1])
+            if (dongle->queue[0]->last_comp_t > dongle->queue[1]->last_comp_t)
+                swap(dongle->queue);
+        // if (dongle->queue[0] && !dongle->queue[1])
+        //     (void) = (void);
+        
+    }
+    pthread_mutex_unlock(&dongle->mutex);
+}
+
+void pop(t_dongle *dongle)
+{
+    t_coder *tmp;
+    
+    tmp = NULL;
+    pthread_mutex_lock(&dongle->mutex);
+    if (dongle->queue[1])
+        tmp = dongle->queue[1];
+    // how to be sure that I am not working with memory where the coder is allocated
+    // dongle->queue = memset((void *)dongle->queue, 0, sizeof(t_coder *) * 2);
+    dongle->queue[0] = tmp;
+    dongle->queue[1] = NULL;
+    pthread_mutex_unlock(&dongle->mutex);
+    // return result;
 }

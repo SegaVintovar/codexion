@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/07/24 11:55:27 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/12 17:12:32 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/24 11:55:27 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/16 17:07:42 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,10 @@ void    free_dongles(t_quantum_compiler *state)
             {
                 if (state->dongles[i])
                 {
+                    destroyQueue(state->dongles[i]->queue);
                     pthread_mutex_destroy(&state->dongles[i]->mutex);
                     free(state->dongles[i]);
+                    
                 }
                 i++;
             }
@@ -38,20 +40,20 @@ void    free_coders(t_quantum_compiler *state)
     int i;
 
     if (state->coders)
+    {
+        i = 0;
+        while (i < state->coders_c)
         {
-            i = 0;
-            while (i < state->coders_c)
+            if (state->coders[i])
             {
-                if (state->coders[i])
-				{
-					pthread_mutex_destroy(&state->coders[i]->time_check);
-                    pthread_cond_destroy(&state->coders[i]->stop_cond);
-                    free(state->coders[i]);
-                }
-				i++;
+                pthread_mutex_destroy(&state->coders[i]->time_check);
+                pthread_cond_destroy(&state->coders[i]->stop_cond);
+                free(state->coders[i]);
             }
-            free(state->coders);
+            i++;
         }
+        free(state->coders);
+    }
 }
 
 void    free_all(t_quantum_compiler *state)

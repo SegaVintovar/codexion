@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   codexion.h                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 15:12:47 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/15 17:47:48 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   codexion.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 15:12:47 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/16 21:51:49 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ typedef struct	s_dongle {
     uint64_t			avaliable_at;
     int                 id;
     int                 buzy;
-    t_coder             *next;
+    t_coder             **queue;
 }   t_dongle;
 
 
@@ -155,7 +155,13 @@ int		willBeBurned(t_coder *coder, t_dongle *dongle);
 // these functions have same purpose = they are checking for the burnout of the current coder
 int     burnoutCheck(t_quantum_compiler *state, t_coder *coder);
 int		isBurned(t_quantum_compiler *state, t_coder *coder);
-void    burnoutReport(t_quantum_compiler *state, t_coder *coder, uint64_t whenWeGotBurned);
+void    burnoutReport(t_quantum_compiler *state, t_coder *coder, uint64_t when);
 int		burnoutReportCheck(t_quantum_compiler *state);
 
+
+// queue
+t_coder **initQueue();
+void    destroyQueue(t_coder **queue);
+void    enque(t_dongle *dongle, t_coder *coder);
+void    pop(t_dongle *dongle);
 # endif

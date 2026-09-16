@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/24 10:27:39 by vs                #+#    #+#             */
-/*   Updated: 2026/09/08 10:08:42 by vs               ###   ########.fr       */
+/*   Updated: 2026/09/16 11:01:58 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 // to handle the int overflow i ll stop conversion as soon as my long nbr
 // going to be bigger then INT_MAX, so the return woudl be
-// in the long - int range
+// in the long, but within int range
+// in case this fucntion returns n > INT_MAX, the value is incorrect
+// and caller has to reject that return
 long	my_atoi(const char *nptr)
 {
 	int		i;

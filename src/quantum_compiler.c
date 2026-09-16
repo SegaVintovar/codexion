@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   quantum_compiler.c                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 13:00:58 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/14 19:02:42 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   quantum_compiler.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 13:00:58 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/16 18:59:10 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	assign_values(t_quantum_compiler *result, char **argv)
 	result->codersFinished = 0;
 	result->burnoutReported = 0;
 }
+
 
 t_dongle    **init_dongles(t_quantum_compiler *instance)
 {

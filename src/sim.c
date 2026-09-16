@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   sim.c                                              :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/09/05 13:00:53 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/15 18:31:51 by vsudak        ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   sim.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/05 13:00:53 by vsudak            #+#    #+#             */
+/*   Updated: 2026/09/16 21:58:32 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,26 @@ void	oneTwoMutex(t_coder *coder, t_dongle **first, t_dongle **second)
 	}
 }
 
+// implement queue where
+// coder go
+// here I am waiting for the current coder to appear on the first place in the queue
+// 
+// got a data race
+void    request(t_coder *coder, t_dongle *first, t_dongle *second)
+{
+    // add this coder to the queue of both dongles
+    // pthread_mutex_lock(&second->mutex);
+    // pthread_mutex_lock(&first->mutex);
+    enque(first, coder);
+    enque(second, coder);
+    // as soon as this coder is in queue[0] of the both dongles
+    while (first->queue[0] != coder && second->queue[0] != coder)
+        usleep(500);
+    pop(first);
+    pop(second);
+    // pthread_mutex_lock(&second->mutex);
+    // pthread_mutex_lock(&first->mutex);
+}
 
 int	dongleAcquisition(t_coder *coder)
 {
@@ -35,6 +55,7 @@ int	dongleAcquisition(t_coder *coder)
 	t_dongle	*second;
 
 	oneTwoMutex(coder, &first, &second);
+    request(coder, first, second);
 	// should I stay or should I go?
 	// waiting mechanics to start geting dongles
 	if (grabDOngle(first, coder) == 1)
