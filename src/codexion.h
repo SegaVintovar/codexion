@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/05 15:12:47 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/16 21:51:49 by vs               ###   ########.fr       */
+/*   Updated: 2026/09/17 21:57:15 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,10 @@ typedef struct	s_quantum_compiler
 	// burnout stuff
 	pthread_mutex_t	burnoutMutex;
 	int				whoGotBurned;
+
+    // mutex for last comp_t, but it is here so only one thread at a time can check it
+    pthread_mutex_t last_comp_t_mutex;
+    
 	uint64_t		whenWeGotBurn;
 	int				codersFinished;
 

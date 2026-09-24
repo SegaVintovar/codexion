@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/14 18:16:17 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/16 21:50:57 by vs               ###   ########.fr       */
+/*   Updated: 2026/09/20 13:45:04 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,31 +46,51 @@ void enque(t_dongle *dongle, t_coder *coder)
         dongle->queue[1] = coder;
     else
         dongle->queue[0] = coder;
-    if (coder->state->scheduler == EDF)
-    {
-        // sort of heapify
-        if (dongle->queue[0] && dongle->queue[1])
-            if (dongle->queue[0]->last_comp_t > dongle->queue[1]->last_comp_t)
-                swap(dongle->queue);
-        // if (dongle->queue[0] && !dongle->queue[1])
-        //     (void) = (void);
-        
-    }
     pthread_mutex_unlock(&dongle->mutex);
+
+    
+    if (coder->state->scheduler != EDF)
+        return ;
+    // {
+    //     // sort of heapify
+    //     pthread_mutex_lock(&coder->state->last_comp_t_mutex);
+    //     if (dongle->queue[0] && dongle->queue[1])
+    //         if (dongle->queue[0]->last_comp_t > dongle->queue[1]->last_comp_t)
+    //             swap(dongle->queue);
+
+    //     pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
+        // if (dongle->queue[0] && !dongle->queue[1])
+    uint64_t	a;
+    uint64_t	b;
+
+    a = 0;
+    b = 0;
+    pthread_mutex_lock(&coder->state->last_comp_t_mutex);
+    if (dongle->queue[0])
+        a = dongle->queue[0]->last_comp_t;
+    pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
+    pthread_mutex_lock(&coder->state->last_comp_t_mutex);
+    if (dongle->queue[1])
+        b = dongle->queue[1]->last_comp_t;
+    pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
+    if (a > b)
+        swap(dongle->queue);
 }
+    // pthread_mutex_unlock(&dongle->mutex);
+
 
 void pop(t_dongle *dongle)
 {
     t_coder *tmp;
     
     tmp = NULL;
-    pthread_mutex_lock(&dongle->mutex);
+    // pthread_mutex_lock(&dongle->mutex);
     if (dongle->queue[1])
         tmp = dongle->queue[1];
     // how to be sure that I am not working with memory where the coder is allocated
     // dongle->queue = memset((void *)dongle->queue, 0, sizeof(t_coder *) * 2);
     dongle->queue[0] = tmp;
     dongle->queue[1] = NULL;
-    pthread_mutex_unlock(&dongle->mutex);
+    // pthread_mutex_unlock(&dongle->mutex);
     // return result;
 }

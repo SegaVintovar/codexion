@@ -17,15 +17,19 @@ int isBurned(t_quantum_compiler *state, t_coder *coder)
 	uint64_t	last_comp;
 
 	pthread_mutex_lock(&coder->state->burnoutMutex);
+    
     if (coder->state->coders_c == coder->state->codersFinished)
 	{
 		pthread_cond_signal(&state->burnoutSignal);
 		pthread_mutex_unlock(&coder->state->burnoutMutex);
+        
 		return (1);
 	}
 	now = curtime_full();
+    pthread_mutex_lock(&coder->state->last_comp_t_mutex);
 	last_comp = coder->last_comp_t;
-	pthread_mutex_unlock(&coder->state->burnoutMutex);
+	pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
+    pthread_mutex_unlock(&coder->state->burnoutMutex);
     if (now - last_comp >= (uint64_t)state->burnout_t)
 		return (1);
 	else

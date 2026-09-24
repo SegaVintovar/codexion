@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/05 13:00:58 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/16 18:59:10 by vs               ###   ########.fr       */
+/*   Updated: 2026/09/17 11:49:27 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ void	init_mutexes_n_conds(t_quantum_compiler *state)
 	pthread_mutex_init(&state->burnoutMutex, NULL);
     // pthread_mutex_init(&state->state_mutex, NULL);
 	pthread_mutex_init(&state->print_m, NULL);
+    pthread_mutex_init(&state->last_comp_t_mutex, NULL);
 }
 
 t_quantum_compiler	*init_compiler(int argc, char **argv)

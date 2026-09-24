@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/24 11:55:27 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/16 17:07:42 by vs               ###   ########.fr       */
+/*   Updated: 2026/09/17 11:50:10 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void    free_all(t_quantum_compiler *state)
         pthread_cond_destroy(&state->burnoutSignal);
 		pthread_mutex_destroy(&state->burnoutMutex);
 		pthread_mutex_destroy(&state->print_m);
+        pthread_mutex_destroy(&state->last_comp_t_mutex);
         // pthread_mutex_destroy(&state->state_mutex);
         free(state);
     }

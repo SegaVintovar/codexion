@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/05 13:00:53 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/16 21:58:32 by vs               ###   ########.fr       */
+/*   Updated: 2026/09/20 13:02:54 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,21 @@ void	oneTwoMutex(t_coder *coder, t_dongle **first, t_dongle **second)
 // here I am waiting for the current coder to appear on the first place in the queue
 // 
 // got a data race
+
+int isNext(t_coder *coder, t_dongle *first, t_dongle *second)
+{
+    int isNext;
+
+    isNext = 0;
+    pthread_mutex_lock(&first->mutex);
+    pthread_mutex_lock(&second->mutex);
+    if (first->queue[0] == coder && second->queue[0] == coder)
+        isNext = 1;
+    pthread_mutex_unlock(&first->mutex);
+    pthread_mutex_unlock(&second->mutex);
+    return (isNext);
+}
+
 void    request(t_coder *coder, t_dongle *first, t_dongle *second)
 {
     // add this coder to the queue of both dongles
@@ -40,13 +55,14 @@ void    request(t_coder *coder, t_dongle *first, t_dongle *second)
     // pthread_mutex_lock(&first->mutex);
     enque(first, coder);
     enque(second, coder);
+    
     // as soon as this coder is in queue[0] of the both dongles
-    while (first->queue[0] != coder && second->queue[0] != coder)
+    while (isNext(coder, first, second) == 0)
         usleep(500);
     pop(first);
     pop(second);
-    // pthread_mutex_lock(&second->mutex);
-    // pthread_mutex_lock(&first->mutex);
+    // pthread_mutex_unlock(&second->mutex);
+    // pthread_mutex_unlock(&first->mutex);
 }
 
 int	dongleAcquisition(t_coder *coder)
@@ -80,9 +96,12 @@ void *sim(void *coder)
 {
 	int					i;
     t_coder				*c;
+    // uint64_t            c_time;
 	
 	c =(t_coder *)coder;
+    // pthread_mutex_lock(&c->state->last_comp_t_mutex);
 	c->last_comp_t = curtime_full();
+    // pthread_mutex_unlock(&c->state->last_comp_t_mutex);
 	i = 0;
 	while (i < c->state->comp_c_r && !isBurned(c->state, coder))
 	{
