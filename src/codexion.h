@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   codexion.h                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 15:12:47 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/17 21:57:15 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   codexion.h                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 15:12:47 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/24 16:04:00 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,12 @@ typedef enum	e_scheduler
 
 
 typedef struct	s_dongle {
-    pthread_mutex_t		mutex;
-    uint64_t			avaliable_at;
-    int                 id;
-    int                 buzy;
-    t_coder             **queue;
+    pthread_mutex_t	mutex;
+    uint64_t		avaliable_at;
+    int             id;
+    int             buzy;
+	t_coder         **queue;
+	pthread_mutex_t	queue_mutex;
 }   t_dongle;
 
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   dongle.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 13:00:44 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/16 21:36:05 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   dongle.c                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 13:00:44 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/24 16:05:04 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ t_dongle	*dongle_new(int id)
     new->avaliable_at = 0;
     new->buzy = 0;
     pthread_mutex_init(&new->mutex, NULL);
+	pthread_mutex_init(&new->queue_mutex, NULL);
     new->queue = initQueue();
     if (!new->queue)
     {
@@ -48,6 +49,7 @@ void	free_dongle(t_dongle *dongle)
     if (dongle)
     {
         pthread_mutex_destroy(&dongle->mutex);
+		pthread_mutex_destroy(&dongle->queue_mutex);
         free(dongle);
     }
 }

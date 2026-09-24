@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   queue.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/14 18:16:17 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/20 13:45:04 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   queue.c                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/14 18:16:17 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/24 16:11:14 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,21 @@ void    swap(t_coder **queue)
 // add coder to the queue
 void enque(t_dongle *dongle, t_coder *coder)
 {
-    pthread_mutex_lock(&dongle->mutex);
+	t_coder *first;
+	t_coder	*second;
+	
+	first = NULL;
+	second = NULL;
+    pthread_mutex_lock(&dongle->queue_mutex);
     if (dongle->queue[0])
         dongle->queue[1] = coder;
     else
-        dongle->queue[0] = coder;
-    pthread_mutex_unlock(&dongle->mutex);
+	{
+		dongle->queue[0] = coder;
+	}   
+	first = dongle->queue[0];
+	second = dongle->queue[1];
+    pthread_mutex_unlock(&dongle->queue_mutex);
 
     
     if (coder->state->scheduler != EDF)
@@ -66,11 +75,11 @@ void enque(t_dongle *dongle, t_coder *coder)
     a = 0;
     b = 0;
     pthread_mutex_lock(&coder->state->last_comp_t_mutex);
-    if (dongle->queue[0])
+    if (first)
         a = dongle->queue[0]->last_comp_t;
-    pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
-    pthread_mutex_lock(&coder->state->last_comp_t_mutex);
-    if (dongle->queue[1])
+    // pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
+    // pthread_mutex_lock(&coder->state->last_comp_t_mutex);
+    if (second)
         b = dongle->queue[1]->last_comp_t;
     pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
     if (a > b)
