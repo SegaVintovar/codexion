@@ -22,7 +22,6 @@ int isBurned(t_quantum_compiler *state, t_coder *coder)
 	{
 		pthread_cond_signal(&state->burnoutSignal);
 		pthread_mutex_unlock(&coder->state->burnoutMutex);
-        
 		return (1);
 	}
 	now = curtime_full();

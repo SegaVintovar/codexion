@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/05 13:00:53 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/20 13:02:54 by vs               ###   ########.fr       */
+/*   Updated: 2026/09/26 09:44:03 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,12 @@ int isNext(t_coder *coder, t_dongle *first, t_dongle *second)
     int isNext;
 
     isNext = 0;
-    pthread_mutex_lock(&first->mutex);
-    pthread_mutex_lock(&second->mutex);
+    pthread_mutex_lock(&first->queue_mutex);
+    pthread_mutex_lock(&second->queue_mutex);
     if (first->queue[0] == coder && second->queue[0] == coder)
         isNext = 1;
-    pthread_mutex_unlock(&first->mutex);
-    pthread_mutex_unlock(&second->mutex);
+    pthread_mutex_unlock(&first->queue_mutex);
+    pthread_mutex_unlock(&second->queue_mutex);
     return (isNext);
 }
 
@@ -99,9 +99,9 @@ void *sim(void *coder)
     // uint64_t            c_time;
 	
 	c =(t_coder *)coder;
-    // pthread_mutex_lock(&c->state->last_comp_t_mutex);
+    pthread_mutex_lock(&c->state->last_comp_t_mutex);
 	c->last_comp_t = curtime_full();
-    // pthread_mutex_unlock(&c->state->last_comp_t_mutex);
+    pthread_mutex_unlock(&c->state->last_comp_t_mutex);
 	i = 0;
 	while (i < c->state->comp_c_r && !isBurned(c->state, coder))
 	{
