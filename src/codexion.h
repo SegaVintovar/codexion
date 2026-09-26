@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                        +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 15:12:47 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/24 16:04:00 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/26 11:08:52 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ uint64_t    curtime_full();
 uint64_t    time_scince_start(t_quantum_compiler *state);
 uint64_t    converter(uint64_t t);
 void		set_the_time(t_quantum_compiler *state);
+void		set_last_comp_time(t_coder *coder);
 
 // input_check
 int is_scheldue(char *arg);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   sim.c                                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 13:00:53 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/26 09:44:03 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   sim.c                                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/05 13:00:53 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/26 11:13:37 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,17 +91,20 @@ int	dongleAcquisition(t_coder *coder)
 	return (0);
 }
 
+void set_last_comp_time(t_coder *coder)
+{
+	pthread_mutex_lock(&coder->state->last_comp_t_mutex);
+	coder->last_comp_t = curtime_full();
+    pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
+}
 
 void *sim(void *coder)
 {
 	int					i;
     t_coder				*c;
-    // uint64_t            c_time;
 	
 	c =(t_coder *)coder;
-    pthread_mutex_lock(&c->state->last_comp_t_mutex);
-	c->last_comp_t = curtime_full();
-    pthread_mutex_unlock(&c->state->last_comp_t_mutex);
+	set_last_comp_time(c);
 	i = 0;
 	while (i < c->state->comp_c_r && !isBurned(c->state, coder))
 	{

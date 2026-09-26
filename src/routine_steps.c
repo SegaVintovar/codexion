@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   routine_steps.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/14 18:31:09 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/17 22:09:53 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   routine_steps.c                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/14 18:31:09 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/26 11:23:50 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,17 @@
 int	new_comp(t_coder *coder)
 {
 	uint64_t	comp_t;
-	uint64_t	now;
+	// uint64_t	now;
 	
 	pthread_mutex_lock(&coder->time_check);
-	now = curtime_full();
+	// now = curtime_full();
 	comp_t = (uint64_t)coder->state->compile_t;
-    pthread_mutex_lock(&coder->state->last_comp_t_mutex);
-	coder->last_comp_t = now;
-    pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
+	
+    // pthread_mutex_lock(&coder->state->last_comp_t_mutex);
+	// coder->last_comp_t = now;
+    // pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
 	pthread_mutex_unlock(&coder->time_check);
+	set_last_comp_time(coder);
 	safePrint(coder->state, coder, "started compiling");
 	usleep(converter(comp_t));
 	return (isBurned(coder->state, coder));
@@ -61,10 +63,13 @@ void coderFinished(t_quantum_compiler *state)
 // will it be burned at the during dongle_cd
 int	willBeBurned(t_coder *coder, t_dongle *dongle)
 {
+	int result;
+	
     pthread_mutex_lock(&coder->state->last_comp_t_mutex);
 	if (coder->last_comp_t + coder->state->burnout_t < dongle->avaliable_at)
-		return (1);
+		result = 1;
 	else
-		return (0);	
+		result = 0;	
     pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
+	return (result);
 }
