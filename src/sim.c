@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                        +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 13:00:53 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/26 11:13:37 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/26 15:55:12 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ void    request(t_coder *coder, t_dongle *first, t_dongle *second)
     // as soon as this coder is in queue[0] of the both dongles
     while (isNext(coder, first, second) == 0)
         usleep(500);
-    pop(first);
-    pop(second);
+    // pop(first);
+    // pop(second);
     // pthread_mutex_unlock(&second->mutex);
     // pthread_mutex_unlock(&first->mutex);
 }
@@ -71,11 +71,17 @@ int	dongleAcquisition(t_coder *coder)
 	t_dongle	*second;
 
 	oneTwoMutex(coder, &first, &second);
+	if (first == second)
+	{
+		usleep(converter(coder->state->burnout_t));
+		return (1);
+	}
     request(coder, first, second);
 	// should I stay or should I go?
 	// waiting mechanics to start geting dongles
 	if (grabDOngle(first, coder) == 1)
         return (1);
+	pop(first);
 	if (second != first)
 	{
         if (grabDOngle(second, coder) == 1)
@@ -83,6 +89,7 @@ int	dongleAcquisition(t_coder *coder)
 			pthread_mutex_unlock(&first->mutex);
 			return (1);
 		}
+		pop(second);
     }
 	else
 		usleep(converter(coder->state->burnout_t));
@@ -125,9 +132,17 @@ void *sim(void *coder)
 	return (NULL);
 }
 
+void	thread_creation_fail(t_quantum_compiler *state, int i)
+{
+	while (i)
+	{
+		pthread_join(state->coders[i]->thread, NULL);
+		i--;
+	}
+}
 
-// I need to check pthread creat return value and I need to handle it
-void	start_batch_of_coders(t_quantum_compiler *state, int batch)
+// I need to check pthread create return value and I need to handle it
+int	start_batch_of_coders(t_quantum_compiler *state, int batch)
 {
 	int             i;
     t_coder         *c;
@@ -138,10 +153,15 @@ void	start_batch_of_coders(t_quantum_compiler *state, int batch)
 		if (i % 2 == batch)
 		{
 			c = state->coders[i];
-			pthread_create(&state->coders[i]->thread, NULL, sim, (void *)c);
+			if (pthread_create(&c->thread, NULL, sim, (void *)c))
+			{
+				thread_creation_fail(state, i);
+				return (1);
+			}
 		}
         i++;
     }
+	return (0);
 }
 
 // void	start_all_threads(t_quantum_compiler *state)
@@ -156,15 +176,34 @@ void	start_batch_of_coders(t_quantum_compiler *state, int batch)
 // 	}
 // }
 
+void	join_first_batch(t_quantum_compiler *state)
+{
+	int	i;
+
+	i = 0;
+	while (i < state->coders_c)
+	{
+		if (i % 2 == 0)
+			pthread_join(state->coders[i]->thread, NULL);
+		i++;
+	}
+}
+
 void run(t_quantum_compiler *state)
 {
 	int		i;
 	t_coder	*c;
 
-	start_monitor(state);
+	if (start_monitor(state))
+		return ;
 	set_the_time(state);
-    start_batch_of_coders(state, 0);
-	start_batch_of_coders(state, 1);
+    if (start_batch_of_coders(state, 0) != 0)
+		return ;
+	if (start_batch_of_coders(state, 1) != 0)
+	{
+		join_first_batch(state);
+		return ;
+	}
 
     i = 0;
     while (i < state->coders_c)

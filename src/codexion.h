@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                        +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/05 15:12:47 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/26 11:08:52 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/26 15:28:15 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,21 +148,20 @@ int    		debugging(t_coder *coder, t_quantum_compiler *state);
 void		coderFinished(t_quantum_compiler *state);
 
 // monitor
-void	start_monitor(t_quantum_compiler *state);
-void    stop_monitor(t_quantum_compiler *state);
+int			start_monitor(t_quantum_compiler *state);
+void    	stop_monitor(t_quantum_compiler *state);
 
 // use it to print without datarace
-void	safePrint(t_quantum_compiler *state, t_coder *coder, char *stage);
+void		safePrint(t_quantum_compiler *state, t_coder *coder, char *stage);
 // here we are checking if soeone esle has already reported about Burnout
-int     burnoutReportCheck(t_quantum_compiler *state);
+int     	burnoutReportCheck(t_quantum_compiler *state);
 // if burnout has happend then we are using this fn to send a signal to the monitor thread
-void    burnoutReport(t_quantum_compiler *state, t_coder *coder, uint64_t marge);
-int		willBeBurned(t_coder *coder, t_dongle *dongle);
+void    	burnoutReport(t_quantum_compiler *state, t_coder *coder, uint64_t marge);
+int			willBeBurned(t_coder *coder, t_dongle *dongle);
 // these functions have same purpose = they are checking for the burnout of the current coder
-int     burnoutCheck(t_quantum_compiler *state, t_coder *coder);
-int		isBurned(t_quantum_compiler *state, t_coder *coder);
-void    burnoutReport(t_quantum_compiler *state, t_coder *coder, uint64_t when);
-int		burnoutReportCheck(t_quantum_compiler *state);
+int     	burnoutCheck(t_quantum_compiler *state, t_coder *coder);
+int			isBurned(t_quantum_compiler *state, t_coder *coder);
+void    	burnoutReport(t_quantum_compiler *state, t_coder *coder, uint64_t when);
 
 
 // queue
@@ -170,4 +169,5 @@ t_coder **initQueue();
 void    destroyQueue(t_coder **queue);
 void    enque(t_dongle *dongle, t_coder *coder);
 void    pop(t_dongle *dongle);
+
 # endif

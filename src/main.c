@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/24 11:55:27 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/17 11:50:10 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/07/24 11:55:27 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/26 15:16:32 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ int	main(int argc, char **argv)
         return (1);
     }
     state = init_compiler(argc, argv);
+	printf("%d coders_c,\n%d burnout_t,\n%d comp_t,\n%d debug_t,\n%d refactor_t,\n%d comp_c_r,\n%d dongle_cd,\n", \
+	state->coders_c, state->burnout_t, state->compile_t, state->debug_t, state->refactor_t, state->comp_c_r, state->dongle_cd);
     if (!state)
         return (1);
 

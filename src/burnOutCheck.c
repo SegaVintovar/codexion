@@ -45,6 +45,11 @@ void    burnoutReport(t_quantum_compiler *state, t_coder *coder, uint64_t whenWe
 {
     // pthread_mutex_lock(&state->state_mutex);
 	pthread_mutex_lock(&state->burnoutMutex);
+	if (state->burnoutReported)
+	{
+		pthread_mutex_unlock(&state->burnoutMutex);
+		return ;
+	}
     state->burnoutReported = 1;
     state->whoGotBurned = coder->id;
 	if (whenWeGotBurned == 0)
