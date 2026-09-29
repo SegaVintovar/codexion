@@ -1,33 +1,33 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   input_check.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/05 13:10:10 by vsudak            #+#    #+#             */
-/*   Updated: 2026/09/06 14:38:12 by vs               ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   input_check.c									  :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: vs <vs@student.42.fr>					  +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/09/05 13:10:10 by vsudak			#+#	#+#			 */
+/*   Updated: 2026/09/06 14:38:12 by vs			   ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-int ft_isdigit(int c)
+int	ft_isdigit(int c)
 {
-	if(c >= 48 && c <= 57)
-		return(1);
+	if (c >= 48 && c <= 57)
+		return (1);
 	else
-		return(0);
+		return (0);
 }
 
-int is_scheldue(char *arg)
+int	is_scheldue(char *arg)
 {
-    if (!strcmp(arg, "edf") || !strcmp(arg, "fifo"))
-    {
-        return (1);
-    }
-    else
-        return (0);
+	if (!strcmp(arg, "edf") || !strcmp(arg, "fifo"))
+	{
+		return (1);
+	}
+	else
+		return (0);
 }
 
 // sort of isnumber
@@ -58,40 +58,40 @@ int	isint(char *arg)
 int	int_max_and_positivity_check(int argc, char **argv)
 {
 	long	tmp;
-	int     i;
+	int		i;
 
 	i = 1;
 	while (i < argc - 2)
 	{
 		tmp = my_atoi(argv[i]);
 		if (tmp > INT_MAX || tmp < 0)
-        {
-            printf("int max test\n"); return (0);
-        }
-        i++;
+		{
+			printf("int max test\n");
+			return (0);
+		}
+		i++;
 	}
 	return (1);
 }
 
-
-int input_check(int argc, char **argv)
+int	input_check(int argc, char **argv)
 {
-    int i;
+	int	i;
 
-    i = 1;
-    while (i < argc - 1)
-    {
+	i = 1;
+	while (i < argc - 1)
+	{
 		if (!isint(argv[i]))
-        {
+		{
 			printf("isint FAIL\n");
-			return 0;
-        }
-        i++;
-    }
+			return (0);
+		}
+		i++;
+	}
 	if (!int_max_and_positivity_check(argc, argv))
-    {
-        printf("int max and positivity FAIL exit\n");
-		return 0;
-    }
-    return 1;
+	{
+		printf("int max and positivity FAIL exit\n");
+		return (0);
+	}
+	return (1);
 }

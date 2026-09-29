@@ -1,111 +1,85 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: vs <vs@student.42.fr>                        +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/07/24 11:55:27 by vsudak        #+#    #+#                 */
-/*   Updated: 2026/09/26 15:16:32 by vsudak        ########   odam.nl         */
-/*                                                                            */
+/*									  */
+/*							::::::::	  */
+/*   main.c			:+: :+:	  */
+/*						   +:+		  */
+/*   By: vs <vs@student.42.fr>			+#+				*/
+/*						   +#+					  */
+/*   Created: 2026/07/24 11:55:27 by vsudak  #+#  #+#			 */
+/*   Updated: 2026/09/26 15:16:32 by vsudak  ########   odam.nl	   */
+/*									  */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-
-void    free_dongles(t_quantum_compiler *state)
+void	free_dongles(t_quantum_compiler *state)
 {
-    int i;
+	int	i;
 
-    if (state->dongles)
-        {
-            i = 0;
-            while (i < state->coders_c)
-            {
-                if (state->dongles[i])
-                {
-                    destroyQueue(state->dongles[i]->queue);
-                    pthread_mutex_destroy(&state->dongles[i]->mutex);
-                    free(state->dongles[i]);
-                    
-                }
-                i++;
-            }
-            free(state->dongles);
-        }
+	if (state->dongles)
+	{
+		i = 0;
+		while (i < state->coders_c)
+		{
+			if (state->dongles[i])
+			{
+				destroy_queue(state->dongles[i]->queue);
+				pthread_mutex_destroy(&state->dongles[i]->mutex);
+				free(state->dongles[i]);
+			}
+			i++;
+		}
+		free(state->dongles);
+	}
 }
 
-void    free_coders(t_quantum_compiler *state)
+void	free_coders(t_quantum_compiler *state)
 {
-    int i;
+	int	i;
 
-    if (state->coders)
-    {
-        i = 0;
-        while (i < state->coders_c)
-        {
-            if (state->coders[i])
-            {
-                pthread_mutex_destroy(&state->coders[i]->time_check);
-                pthread_cond_destroy(&state->coders[i]->stop_cond);
-                free(state->coders[i]);
-            }
-            i++;
-        }
-        free(state->coders);
-    }
+	if (state->coders)
+	{
+		i = 0;
+		while (i < state->coders_c)
+		{
+			if (state->coders[i])
+			{
+				pthread_mutex_destroy(&state->coders[i]->time_check);
+				pthread_cond_destroy(&state->coders[i]->stop_cond);
+				free(state->coders[i]);
+			}
+			i++;
+		}
+		free(state->coders);
+	}
 }
 
-void    free_all(t_quantum_compiler *state)
+void	free_all(t_quantum_compiler *state)
 {
-    if (state)
-    {
-        free_dongles(state);
-        free_coders(state);
-        pthread_cond_destroy(&state->burnoutSignal);
-		pthread_mutex_destroy(&state->burnoutMutex);
+	if (state)
+	{
+		free_dongles(state);
+		free_coders(state);
+		pthread_cond_destroy(&state->burnout_sig);
+		pthread_mutex_destroy(&state->burnout_mutex);
 		pthread_mutex_destroy(&state->print_m);
-        pthread_mutex_destroy(&state->last_comp_t_mutex);
-        // pthread_mutex_destroy(&state->state_mutex);
-        free(state);
-    }
+		pthread_mutex_destroy(&state->last_comp_t_mutex);
+		free(state);
+	}
 }
-
-// to allocate the queue
-// void    queueStart(t_quantum_compiler *state)
-// {
-//     int i;
-
-    
-    
-//     if (state->scheduler == EDF)
-//     {
-//         // here we need a checker that will tell us which coder is closer to burnout   
-//     }
-//     else
-//     {
-//         // here we can have a queue
-//     }
-//     i = 0;
-    
-// }
 
 int	main(int argc, char **argv)
 {
-    t_quantum_compiler  *state;
+	t_quantum_compiler	*state;
 
-    if (argc != 9)
-    {
-        printf("The program is expecting 8 arguments\n");
-        return (1);
-    }
-    state = init_compiler(argc, argv);
-	printf("%d coders_c,\n%d burnout_t,\n%d comp_t,\n%d debug_t,\n%d refactor_t,\n%d comp_c_r,\n%d dongle_cd,\n", \
-	state->coders_c, state->burnout_t, state->compile_t, state->debug_t, state->refactor_t, state->comp_c_r, state->dongle_cd);
-    if (!state)
-        return (1);
-
-    run(state);
-
-    free_all(state);
+	if (argc != 9)
+	{
+		printf("The program is expecting 8 arguments\n");
+		return (1);
+	}
+	state = init_compiler(argc, argv);
+	if (!state)
+		return (1);
+	run(state);
+	free_all(state);
 }

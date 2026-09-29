@@ -9,12 +9,16 @@ SRC = src/coder.c \
 	src/monitor.c \
 	src/my_atoi.c \
 	src/quantum_compiler.c \
-	src/safePrint.c \
+	src/safe_print.c \
 	src/sim.c \
 	src/time.c \
 	src/burnOutCheck.c \
 	src/routine_steps.c \
-	src/queue.c
+	src/queue.c \
+	src/queue_init.c \
+	src/dongle_acquisition.c \
+	src/thread_creation.c \
+	src/scheldule.c
 all:
 	$(CC) $(SRC) $(NAME)
 
