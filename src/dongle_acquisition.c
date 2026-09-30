@@ -6,7 +6,7 @@
 /*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/29 13:22:48 by vs                #+#    #+#             */
-/*   Updated: 2026/09/29 15:07:21 by vs               ###   ########.fr       */
+/*   Updated: 2026/09/29 20:22:55 by vs               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,38 +42,32 @@ void	one_two_mutex(t_coder *coder, t_dongle **first, t_dongle **second)
 	}
 }
 
-void	request(t_coder *coder, t_dongle *first, t_dongle *second)
+int	request(t_coder *coder, t_dongle *first, t_dongle *second)
 {
 	enque(first, coder);
 	enque(second, coder);
 	while (is_next(coder, first, second) == 0)
+	{
+		if (is_burned(coder->state, coder) == 1)
+			return (1);
 		usleep(500);
+	}
+	return (0);
 }
 
-void	grab_two_dongles(t_coder *coder, t_dongle *first, t_dongle *second)
+int	grab_two_dongles(t_coder *coder, t_dongle *first, t_dongle *second)
 {
 	int	burned;
 
 	burned = grab_dongle(first, coder);
 	pop(first);
 	if (burned)
-	{
-		if (second != first)
-			pop(second);
-		return ;
-	}
-	if (second != first)
-	{
-		burned = grab_dongle(second, coder);
-		pop(second);
-		if (burned)
-		{
-			pthread_mutex_unlock(&first->mutex);
-			return ;
-		}
-	}
-	else
-		usleep(converter(coder->state->burnout_t));
+		return (pop(second), 1);
+	burned = grab_dongle(second, coder);
+	pop(second);
+	if (burned)
+		return (pthread_mutex_unlock(&first->mutex), 1);
+	return (0);
 }
 
 int	dongle_acquisition(t_coder *coder)
@@ -87,8 +81,10 @@ int	dongle_acquisition(t_coder *coder)
 		usleep(converter(coder->state->burnout_t));
 		return (1);
 	}
-	request(coder, first, second);
-	grab_two_dongles(coder, first, second);
+	if (request(coder, first, second) == 1)
+		return (1);
+	if (grab_two_dongles(coder, first, second) == 1)
+		return (1);
 	if (is_burned(coder->state, coder) == 1)
 		return (drop_dongles(coder), 1);
 	return (0);

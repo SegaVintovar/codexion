@@ -53,19 +53,5 @@ void	set_the_time(t_quantum_compiler *state)
 // here i am sleeping till end of the dongle cd or coder`s bo
 uint64_t	sleep_cd(t_dongle *dongle, t_coder *coder, uint64_t now)
 {
-	uint64_t	to_sleep;
-	uint64_t	bot;
-
-	pthread_mutex_lock(&coder->state->last_comp_t_mutex);
-	bot = coder->last_comp_t + (uint64_t)coder->state->burnout_t;
-	pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
-	if (bot > now)
-	{
-		if (will_b_burned(coder, coder->state->dongle_cd))
-			to_sleep = bot - now;
-		else
-			to_sleep = dongle->avaliable_at - now;
-		return (to_sleep);
-	}
-	return (0);
+	return (cap_to_deadline(coder, dongle->avaliable_at - now));
 }

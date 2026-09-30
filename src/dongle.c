@@ -78,7 +78,8 @@ int	grab_dongle(t_dongle *first, t_coder *coder)
 {
 	uint64_t	now;
 
-	pthread_mutex_lock(&first->mutex);
+	if (lock_before_deadline(coder, &first->mutex))
+		return (1);
 	now = curtime_full();
 	if (first->avaliable_at > now)
 		usleep(converter(sleep_cd(first, coder, now)));

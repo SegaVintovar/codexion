@@ -89,6 +89,10 @@ long				my_atoi(const char *nptr);
 uint64_t			curtime_full(void);
 uint64_t			time_scince_start(t_quantum_compiler *state);
 uint64_t			converter(uint64_t t);
+uint64_t			deadline_of(t_coder *coder);
+uint64_t			cap_to_deadline(t_coder *coder, uint64_t want);
+int					lock_before_deadline(
+						t_coder *coder, pthread_mutex_t *mutex);
 void				set_the_time(t_quantum_compiler *state);
 void				set_last_comp_time(t_coder *coder);
 

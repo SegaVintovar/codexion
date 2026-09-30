@@ -18,7 +18,8 @@ SRC = src/coder.c \
 	src/queue_init.c \
 	src/dongle_acquisition.c \
 	src/thread_creation.c \
-	src/scheldule.c
+	src/scheldule.c \
+	src/deadline.c
 all:
 	$(CC) $(SRC) $(NAME)
 

@@ -21,28 +21,19 @@ int	new_comp(t_coder *coder)
 	pthread_mutex_unlock(&coder->time_check);
 	set_last_comp_time(coder);
 	safe_print(coder->state, coder, "started compiling");
-	usleep(converter(comp_t));
-	return (is_burned(coder->state, coder));
+	usleep(converter(cap_to_deadline(coder, comp_t)));
+	if (is_burned(coder->state, coder))
+		return (1);
+	return (0);
 }
 
 int	refactoring(t_coder *coder, t_quantum_compiler *state)
 {
 	uint64_t	t2sleep;
-	uint64_t	t2burnout;
 
-	t2burnout = converter((uint64_t)state->burnout_t);
-	if (will_b_burned(coder, converter((uint64_t)state->refactor_t)))
-	{
-		pthread_mutex_lock(&state->last_comp_t_mutex);
-		t2sleep = converter((coder->last_comp_t + t2burnout) - curtime_full());
-		pthread_mutex_unlock(&state->last_comp_t_mutex);
-	}
-	else
-	{
-		t2sleep = converter((uint64_t)state->refactor_t);
-	}
+	t2sleep = cap_to_deadline(coder, (uint64_t)state->refactor_t);
 	safe_print(state, coder, "started refactoring");
-	usleep(t2sleep);
+	usleep(converter(t2sleep));
 	if (is_burned(state, coder))
 		return (1);
 	return (0);
@@ -51,19 +42,8 @@ int	refactoring(t_coder *coder, t_quantum_compiler *state)
 int	debugging(t_coder *coder, t_quantum_compiler *state)
 {
 	uint64_t	t2sleep;
-	uint64_t	t2burnout;
 
-	t2burnout = converter((uint16_t)state->burnout_t);
-	if (will_b_burned(coder, converter((uint64_t)state->debug_t)))
-	{
-		pthread_mutex_lock(&coder->state->last_comp_t_mutex);
-		t2sleep = converter(coder->last_comp_t + t2burnout - curtime_full());
-		pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
-	}
-	else
-	{
-		t2sleep = converter((uint64_t)state->debug_t);
-	}
+	t2sleep = converter(cap_to_deadline(coder, (uint64_t)state->debug_t));
 	safe_print(state, coder, "started debugging");
 	usleep(t2sleep);
 	if (is_burned(state, coder))
