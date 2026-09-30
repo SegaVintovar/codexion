@@ -27,7 +27,7 @@ void	*sim(void *coder)
 	c = (t_coder *)coder;
 	set_last_comp_time(c);
 	i = 0;
-	while (i < c->state->comp_c_r && !is_burned(c->state, coder))
+	while (i++ < c->state->comp_c_r && !is_burned(c->state, coder))
 	{
 		if (dongle_acquisition(c) == 1)
 			return (burnout_report(c->state, coder, 0), NULL);
@@ -40,9 +40,11 @@ void	*sim(void *coder)
 			return (burnout_report(c->state, coder, 0), NULL);
 		if (refactoring(coder, c->state) == 1)
 			return (burnout_report(c->state, coder, 0), NULL);
-		i++;
 	}
-	coder_finished(c->state);
+	if (c->state->comp_c_r == i)
+		coder_finished(c->state);
+	else
+		burnout_report(c->state, coder, 0);
 	return (NULL);
 }
 
