@@ -12,7 +12,7 @@ SRC = src/coder.c \
 	src/safe_print.c \
 	src/sim.c \
 	src/time.c \
-	src/burnOutCheck.c \
+	src/burn_out_check.c \
 	src/routine_steps.c \
 	src/queue.c \
 	src/queue_init.c \
@@ -21,9 +21,6 @@ SRC = src/coder.c \
 	src/scheldule.c \
 	src/deadline.c
 all:
-	$(CC) $(SRC) $(NAME)
-
-compile:
 	$(CC) $(CFLAGS) $(NAME) $(SRC)
 
 clean:

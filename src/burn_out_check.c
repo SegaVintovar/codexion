@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   burnOutCheck.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/29 12:24:07 by vs                #+#    #+#             */
-/*   Updated: 2026/09/29 14:37:08 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   burnOutCheck.c                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/29 12:24:07 by vs            #+#    #+#                 */
+/*   Updated: 2026/09/30 12:11:38 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,21 +82,20 @@ int	burnout_rep_check(t_quantum_compiler *state)
 }
 
 // will it be burned during next activity
-int	will_b_burned(t_coder *coder, uint64_t next_activity)
-{
-	int			result;
-	uint64_t	now;
+// int	will_b_burned(t_coder *coder, uint64_t next_activity)
+// {
+// 	int			result;
+// 	uint64_t	now;
 
-	pthread_mutex_lock(&coder->state->last_comp_t_mutex);
-	now = curtime_full();
-	if (coder->last_comp_t + coder->state->burnout_t < now + next_activity)
-		result = 1;
-	else
-		result = 0;
-	pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
-	return (result);
-}
-
+// 	pthread_mutex_lock(&coder->state->last_comp_t_mutex);
+// 	now = curtime_full();
+// 	if (coder->last_comp_t + coder->state->burnout_t < now + next_activity)
+// 		result = 1;
+// 	else
+// 		result = 0;
+// 	pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
+// 	return (result);
+// }
 // For compiling top check if current coder is not burnedout
 // not used anymore
 // int	burnoutCheck(t_quantum_compiler *state, t_coder *coder)

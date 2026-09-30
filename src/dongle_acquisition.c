@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   dongle_acquisition.c                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/29 13:22:48 by vs                #+#    #+#             */
-/*   Updated: 2026/09/29 20:22:55 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   dongle_acquisition.c                               :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vs <vs@student.42.fr>                        +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/29 13:22:48 by vs            #+#    #+#                 */
+/*   Updated: 2026/09/30 12:12:54 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	grab_two_dongles(t_coder *coder, t_dongle *first, t_dongle *second)
 	burned = grab_dongle(second, coder);
 	pop(second);
 	if (burned)
-		return (pthread_mutex_unlock(&first->mutex), 1);
+		return (release_dongle(first, 0), 1);
 	return (0);
 }
 

@@ -34,14 +34,6 @@ t_dongle	*dongle_new(int id)
 	return (new);
 }
 
-void	dongle_unlock(t_dongle *dongle)
-{
-	if (dongle)
-	{
-		pthread_mutex_unlock(&dongle->mutex);
-	}
-}
-
 // this one will go into free all
 void	free_dongle(t_dongle *dongle)
 {
@@ -55,39 +47,26 @@ void	free_dongle(t_dongle *dongle)
 
 void	drop_dongles(t_coder *coder)
 {
-	uint64_t	now;
 	uint64_t	avail_at;
 
-	now = curtime_full();
-	avail_at = now + coder->state->dongle_cd;
-	coder->left->avaliable_at = avail_at;
-	coder->right->avaliable_at = avail_at;
-	coder->right->buzy = 0;
-	if (coder->left == coder->right)
-	{
-		pthread_mutex_unlock(&coder->left->mutex);
-	}
-	else
-	{
-		pthread_mutex_unlock(&coder->left->mutex);
-		pthread_mutex_unlock(&coder->right->mutex);
-	}
+	avail_at = curtime_full() + coder->state->dongle_cd;
+	release_dongle(coder->left, avail_at);
+	if (coder->left != coder->right)
+		release_dongle(coder->right, avail_at);
 }
 
 int	grab_dongle(t_dongle *first, t_coder *coder)
 {
+	uint64_t	avail_at;
 	uint64_t	now;
 
-	if (lock_before_deadline(coder, &first->mutex))
+	if (claim_dongle(first, coder, &avail_at))
 		return (1);
 	now = curtime_full();
-	if (first->avaliable_at > now)
-		usleep(converter(sleep_cd(first, coder, now)));
+	if (avail_at > now)
+		usleep(converter(cap_to_deadline(coder, avail_at - now)));
 	if (is_burned(coder->state, coder) == 1)
-		return (pthread_mutex_unlock(&first->mutex), 1);
+		return (release_dongle(first, 0), 1);
 	safe_print(coder->state, coder, "taken dongle");
-	first->buzy = 1;
-	if (is_burned(coder->state, coder) == 1)
-		return (pthread_mutex_unlock(&first->mutex), 1);
 	return (0);
 }

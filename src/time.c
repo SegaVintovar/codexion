@@ -49,9 +49,3 @@ void	set_the_time(t_quantum_compiler *state)
 	while (i < state->coders_c)
 		state->coders[i++]->last_comp_t = now;
 }
-
-// here i am sleeping till end of the dongle cd or coder`s bo
-uint64_t	sleep_cd(t_dongle *dongle, t_coder *coder, uint64_t now)
-{
-	return (cap_to_deadline(coder, dongle->avaliable_at - now));
-}

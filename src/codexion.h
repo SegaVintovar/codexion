@@ -91,8 +91,9 @@ uint64_t			time_scince_start(t_quantum_compiler *state);
 uint64_t			converter(uint64_t t);
 uint64_t			deadline_of(t_coder *coder);
 uint64_t			cap_to_deadline(t_coder *coder, uint64_t want);
-int					lock_before_deadline(
-						t_coder *coder, pthread_mutex_t *mutex);
+int					claim_dongle(
+						t_dongle *dongle, t_coder *coder, uint64_t *avail_at);
+void				release_dongle(t_dongle *dongle, uint64_t avail_at);
 void				set_the_time(t_quantum_compiler *state);
 void				set_last_comp_time(t_coder *coder);
 
@@ -110,7 +111,6 @@ t_coder				*new_coder(int id, t_quantum_compiler *state);
 void				assign_dongles(t_coder *coder, t_quantum_compiler *state);
 t_coder				**init_coders(t_quantum_compiler *state);
 t_dongle			*dongle_new(int id);
-void				dongle_unlock(t_dongle *dongle);
 void				free_dongle(t_dongle *dongle);
 int					dongle_acquisition(t_coder *coder);
 void				drop_dongles(t_coder *coder);
@@ -119,7 +119,6 @@ int					grab_dongle(t_dongle *first, t_coder *coder);
 // simulation
 void				*sim(void *coder);
 void				run(t_quantum_compiler *state);
-uint64_t			sleep_cd(t_dongle *dongle, t_coder *coder, uint64_t now);
 int					new_comp(t_coder *coder);
 int					refactoring(t_coder *coder, t_quantum_compiler *state);
 int					debugging(t_coder *coder, t_quantum_compiler *state);
@@ -144,7 +143,7 @@ void				burnout_report(
 						t_quantum_compiler *state,
 						t_coder *coder,
 						uint64_t when);
-int					will_b_burned(t_coder *coder, uint64_t next_stop);
+// int					will_b_burned(t_coder *coder, uint64_t next_stop);
 // queue
 t_coder				**init_queue(void);
 void				destroy_queue(t_coder **queue);

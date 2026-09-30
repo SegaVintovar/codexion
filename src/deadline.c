@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   deadline.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vs <vs@student.42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/29 20:22:40 by vs                #+#    #+#             */
-/*   Updated: 2026/09/30 10:17:35 by vs               ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   deadline.c                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: vsudak <vsudak@student.codam.nl>             +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2026/09/30 12:13:07 by vsudak        #+#    #+#                 */
+/*   Updated: 2026/09/30 12:13:11 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,34 @@ uint64_t	cap_to_deadline(t_coder *coder, uint64_t want)
 	return (want);
 }
 
-// mutex lock that gives up at the coder's deadline, returns 1 on timeout
-int	lock_before_deadline(t_coder *coder, pthread_mutex_t *mutex)
+// waits until the dongle is free and claims it (only plain lock/unlock +
+// usleep). The mutex just guards the flags, it is never held while waiting.
+// returns 1 if the coder burned out while waiting
+int	claim_dongle(t_dongle *dongle, t_coder *coder, uint64_t *avail_at)
 {
-	struct timespec	ts;
-	uint64_t		dl;
+	while (1)
+	{
+		pthread_mutex_lock(&dongle->mutex);
+		if (dongle->buzy == 0)
+		{
+			dongle->buzy = 1;
+			*avail_at = dongle->avaliable_at;
+			pthread_mutex_unlock(&dongle->mutex);
+			return (0);
+		}
+		pthread_mutex_unlock(&dongle->mutex);
+		if (is_burned(coder->state, coder) == 1)
+			return (1);
+		usleep(500);
+	}
+}
 
-	dl = deadline_of(coder);
-	ts.tv_sec = dl / 1000;
-	ts.tv_nsec = (dl % 1000) * 1000000;
-	if (pthread_mutex_timedlock(mutex, &ts) == 0)
-		return (0);
-	return (1);
+// frees the dongle, avail_at == 0 keeps the old cooldown
+void	release_dongle(t_dongle *dongle, uint64_t avail_at)
+{
+	pthread_mutex_lock(&dongle->mutex);
+	dongle->buzy = 0;
+	if (avail_at != 0)
+		dongle->avaliable_at = avail_at;
+	pthread_mutex_unlock(&dongle->mutex);
 }
