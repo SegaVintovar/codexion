@@ -61,7 +61,7 @@ int	int_max_and_positivity_check(int argc, char **argv)
 	int		i;
 
 	i = 1;
-	while (i < argc - 2)
+	while (i < argc - 1)
 	{
 		tmp = my_atoi(argv[i]);
 		if (tmp > INT_MAX || tmp < 0)

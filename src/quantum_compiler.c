@@ -104,6 +104,7 @@ t_quantum_compiler	*init_compiler(int argc, char **argv)
 	if (!result->dongles)
 		return (free(result), NULL);
 	result->coders = init_coders(result);
+	result->who_got_burned = -1;
 	if (!result->coders)
 	{
 		i = result->coders_c;

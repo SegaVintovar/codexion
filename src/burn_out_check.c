@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   burnOutCheck.c                                     :+:    :+:            */
+/*   burn_out_check.c                                   :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: vs <vs@student.42.fr>                        +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/09/29 12:24:07 by vs            #+#    #+#                 */
-/*   Updated: 2026/09/30 12:11:38 by vsudak        ########   odam.nl         */
+/*   Updated: 2026/09/30 16:35:29 by vsudak        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,16 +71,15 @@ void	burnout_report(t_quantum_compiler *state, t_coder *coder, uint64_t when)
 }
 
 // here we are checking if burnout was already reported
-int	burnout_rep_check(t_quantum_compiler *state)
-{
-	int	result;
+// int	burnout_rep_check(t_quantum_compiler *state)
+// {
+// 	int	result;
 
-	pthread_mutex_lock(&state->burnout_mutex);
-	result = state->burnout_reported;
-	pthread_mutex_unlock(&state->burnout_mutex);
-	return (result);
-}
-
+// 	pthread_mutex_lock(&state->burnout_mutex);
+// 	result = state->burnout_reported;
+// 	pthread_mutex_unlock(&state->burnout_mutex);
+// 	return (result);
+// }
 // will it be burned during next activity
 // int	will_b_burned(t_coder *coder, uint64_t next_activity)
 // {

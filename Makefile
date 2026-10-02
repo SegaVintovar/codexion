@@ -1,7 +1,10 @@
+# below is correct version in order to avoid unnesessary relinking
+# and there is a rule for NAME
+
 NAME = codexion
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread -g -o
+CFLAGS = -Fsanitize=thread -Wall -Wextra -Werror -pthread -g -o
 SRC = src/coder.c \
 	src/dongle.c \
 	src/input_check.c \
@@ -20,15 +23,17 @@ SRC = src/coder.c \
 	src/thread_creation.c \
 	src/scheldule.c \
 	src/deadline.c
-all:
+
+all: $(NAME)
+
+$(NAME): $(SRC)
 	$(CC) $(CFLAGS) $(NAME) $(SRC)
 
 clean:
-	rm src/codexion.h.gch
-
-fclean:
-	rm src/codexion.h.gch
 	rm codexion
 
-re:
-	
+fclean: clean
+
+re: fclean all
+
+.PHONY: all clean fclean re

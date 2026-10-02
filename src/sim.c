@@ -19,15 +19,23 @@ void	set_last_comp_time(t_coder *coder)
 	pthread_mutex_unlock(&coder->state->last_comp_t_mutex);
 }
 
+t_coder	*take_on_board(void *coder)
+{
+	t_coder	*c;
+
+	c = (t_coder *)coder;
+	set_last_comp_time(c);
+	return (c);
+}
+
 void	*sim(void *coder)
 {
 	int		i;
 	t_coder	*c;
 
-	c = (t_coder *)coder;
-	set_last_comp_time(c);
+	c = take_on_board(coder);
 	i = 0;
-	while (i++ < c->state->comp_c_r && !is_burned(c->state, coder))
+	while (i < c->state->comp_c_r && !is_burned(c->state, coder))
 	{
 		if (dongle_acquisition(c) == 1)
 			return (burnout_report(c->state, coder, 0), NULL);
@@ -40,6 +48,7 @@ void	*sim(void *coder)
 			return (burnout_report(c->state, coder, 0), NULL);
 		if (refactoring(coder, c->state) == 1)
 			return (burnout_report(c->state, coder, 0), NULL);
+		i++;
 	}
 	if (c->state->comp_c_r == i)
 		coder_finished(c->state);
